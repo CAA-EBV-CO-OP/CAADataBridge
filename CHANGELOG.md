@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - BA mode toggle for switching between decimal and integer bath handling
   - Works in both Standard/RESO mode and Destination Schema mode
   - Auto-accept on pre-loaded profiles that previously accepted the conversion
-- **Data Enrichment Features**:
+- **Data Enrichment Features** *(optional, not yet enabled in distribution)*:
   - Status normalization for standardizing listing status values
   - SubArea coercion for consistent sub-area naming
   - ArcGIS geocoding integration
