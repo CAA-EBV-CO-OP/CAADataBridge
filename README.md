@@ -1,6 +1,6 @@
 # CValR Column Mapper
 
-*Distributed as **CAADataBridge** by the Community of Asset Analysts (CAA)*
+*Distributed as **CAADataBridge** by the [Community of Asset Analysts (CAA)](https://www.valuemetrics.info/community-of-asset-analysts), a George Dell Value Metrics initiative.*
 
 A standalone Shiny app for mapping CSV columns to standardized field names for real estate data analysis.
 
