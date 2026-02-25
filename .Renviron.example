@@ -1,0 +1,25 @@
+# MongoDB Connection String
+# Copy this file to .Renviron and fill in your actual connection string
+# DO NOT commit .Renviron to git - it contains secrets!
+#
+# Get your connection string from MongoDB Atlas:
+# 1. Go to your cluster in Atlas
+# 2. Click "Connect" > "Drivers"
+# 3. Copy the connection string and replace <password> with your actual password
+
+MONGODB_URI=mongodb+srv://your_username:your_password@your-cluster.mongodb.net/?retryWrites=true&w=majority&appName=your-app
+
+# Python Configuration (Optional - improves matching speed)
+# ============================================================================
+# The app uses rapidfuzz (Python) for faster fuzzy string matching.
+# This is optional - the app works fine with R-only matching.
+#
+# To enable rapidfuzz:
+# 1. Install Python 3.8+ on your system
+# 2. Run: pip install rapidfuzz
+# 3. Optionally set RETICULATE_PYTHON below if R can't find Python
+#
+# Uncomment and set to your Python path if needed:
+# RETICULATE_PYTHON=/usr/bin/python3
+# RETICULATE_PYTHON=C:/Python311/python.exe
+# RETICULATE_PYTHON=~/miniconda3/envs/mapper/bin/python
