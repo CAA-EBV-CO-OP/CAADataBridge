@@ -1289,37 +1289,102 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
   # Tab 3: Build Decision Tree
   # ==========================================================================
 
-  # Address picker for quick subject selection
-  output$address_picker <- renderUI({
+  # Build picker rows for subject quick-pick.
+  # Use row IDs as select values so duplicate addresses select a specific record.
+  subject_picker_rows <- reactive({
     req(rv$adf_transformed)
 
-    # Find address column (look for common address field names)
-    address_cols <- names(rv$adf_transformed)[grepl("address|street", names(rv$adf_transformed), ignore.case = TRUE)]
+    df <- rv$adf_transformed
+    address_cols <- names(df)[grepl("address|street", names(df), ignore.case = TRUE)]
+    if (length(address_cols) == 0) return(NULL)
+    address_col <- address_cols[1]
 
-    if (length(address_cols) > 0) {
-      # Use first address column found
-      address_col <- address_cols[1]
-      addresses <- unique(rv$adf_transformed[[address_col]])
-      addresses <- addresses[!is.na(addresses)]
-      address_choices <- sort(unique(trimws(as.character(addresses))))
-      address_choices <- address_choices[nzchar(address_choices)]
-      named_choices <- setNames(address_choices, address_choices)
+    addresses <- trimws(as.character(df[[address_col]]))
+    valid <- !is.na(addresses) & nzchar(addresses)
+    if (!any(valid)) return(NULL)
 
-      selectizeInput(
-        ns("selected_address"),
-        label = NULL,
-        choices = c(" " = "", named_choices),
-        selected = "",
-        options = list(
-          placeholder = 'Type to search addresses...',
-          maxOptions = max(500, length(address_choices)),
-          closeAfterSelect = TRUE,
-          onInitialize = I("function() { this.setValue(''); }")
-        )
+    picker <- data.frame(
+      row_id = which(valid),
+      address = addresses[valid],
+      stringsAsFactors = FALSE
+    )
+
+    # Optional context fields to disambiguate duplicate addresses.
+    date_cols <- names(df)[grepl("datesold|sold.?date|sale.?date|close.?date", names(df), ignore.case = TRUE)]
+    date_col <- if (length(date_cols) > 0) date_cols[1] else NULL
+    if (!is.null(date_col)) {
+      raw_dates <- as.character(df[[date_col]][valid])
+      parsed_dates <- suppressWarnings(as.Date(raw_dates))
+      picker$date_text <- ifelse(!is.na(parsed_dates), format(parsed_dates, "%Y-%m-%d"), raw_dates)
+    } else {
+      picker$date_text <- NA_character_
+    }
+
+    price_priority <- c("PriceSold", "SoldPrice", "SalePrice")
+    price_col <- if (any(price_priority %in% names(df))) {
+      price_priority[price_priority %in% names(df)][1]
+    } else {
+      price_cols <- names(df)[grepl("pricesold|sold.?price|sale.?price", names(df), ignore.case = TRUE)]
+      if (length(price_cols) > 0) price_cols[1] else NULL
+    }
+    if (!is.null(price_col)) {
+      raw_price <- as.character(df[[price_col]][valid])
+      num_price <- suppressWarnings(as.numeric(gsub("[,$[:space:]]", "", raw_price)))
+      picker$price_text <- ifelse(
+        !is.na(num_price),
+        paste0("$", format(round(num_price, 0), big.mark = ",", scientific = FALSE, trim = TRUE)),
+        raw_price
       )
     } else {
-      p("No address column found in data", class = "text-muted")
+      picker$price_text <- NA_character_
     }
+
+    duplicate_address <- duplicated(picker$address) | duplicated(picker$address, fromLast = TRUE)
+    picker$label <- picker$address
+    if (any(duplicate_address)) {
+      context <- ifelse(
+        !is.na(picker$date_text) & nzchar(picker$date_text),
+        picker$date_text,
+        paste0("row ", picker$row_id)
+      )
+      context <- ifelse(
+        !is.na(picker$price_text) & nzchar(picker$price_text),
+        paste0(context, " | ", picker$price_text),
+        context
+      )
+      picker$label[duplicate_address] <- paste0(picker$address[duplicate_address], " | ", context[duplicate_address])
+    }
+
+    # Ensure labels are unique even if context collides.
+    duplicate_label <- duplicated(picker$label) | duplicated(picker$label, fromLast = TRUE)
+    if (any(duplicate_label)) {
+      picker$label[duplicate_label] <- paste0(picker$label[duplicate_label], " | row ", picker$row_id[duplicate_label])
+    }
+
+    picker
+  })
+
+  # Address picker for quick subject selection
+  output$address_picker <- renderUI({
+    picker <- subject_picker_rows()
+    if (is.null(picker) || nrow(picker) == 0) {
+      return(p("No address column found in data", class = "text-muted"))
+    }
+
+    choices <- setNames(as.character(picker$row_id), picker$label)
+
+    selectizeInput(
+      ns("selected_address"),
+      label = NULL,
+      choices = c(" " = "", choices),
+      selected = "",
+      options = list(
+        placeholder = "Type to search addresses...",
+        maxOptions = max(500, nrow(picker)),
+        closeAfterSelect = TRUE,
+        onInitialize = I("function() { this.setValue(''); }")
+      )
+    )
   })
 
   # When user clicks "Use This Property", populate subject fields
@@ -1331,59 +1396,52 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       return()
     }
 
-    # Find the row with this address
-    address_cols <- names(rv$adf_transformed)[grepl("address|street", names(rv$adf_transformed), ignore.case = TRUE)]
-    address_col <- address_cols[1]
+    selected_df <- NULL
+    picker <- subject_picker_rows()
 
-    # Debug: show what we're comparing
-    message("=== ADDRESS LOOKUP DEBUG ===")
-    message("Looking for: '", input$selected_address, "'")
-    message("Address column: ", address_col)
-
-    # Get trimmed addresses for comparison
-    trimmed_addresses <- trimws(rv$adf_transformed[[address_col]])
-    na_count <- sum(is.na(trimmed_addresses))
-    message("NA addresses in data: ", na_count, " of ", length(trimmed_addresses))
-
-    exact_matches <- which(!is.na(trimmed_addresses) & trimmed_addresses == input$selected_address)
-    message("Exact matches found: ", length(exact_matches))
-    if (length(exact_matches) > 0) {
-      message("Match at row index: ", exact_matches[1])
+    # Primary path: use row ID from picker value (supports duplicate addresses safely).
+    selected_row_id <- suppressWarnings(as.integer(input$selected_address))
+    if (!is.null(picker) && !is.na(selected_row_id) && selected_row_id %in% picker$row_id) {
+      selected_df <- rv$adf_transformed[selected_row_id, , drop = FALSE]
     }
 
-    if (length(exact_matches) == 0) {
-      # Try case-insensitive match
-      case_matches <- which(!is.na(trimmed_addresses) & tolower(trimmed_addresses) == tolower(input$selected_address))
-      message("Case-insensitive matches: ", length(case_matches))
+    # Fallback path for legacy string selections: match by address text.
+    if (is.null(selected_df) || nrow(selected_df) == 0) {
+      address_cols <- names(rv$adf_transformed)[grepl("address|street", names(rv$adf_transformed), ignore.case = TRUE)]
+      address_col <- address_cols[1]
+      trimmed_addresses <- trimws(as.character(rv$adf_transformed[[address_col]]))
+      matching_idx <- which(!is.na(trimmed_addresses) & trimmed_addresses == input$selected_address)
+      if (length(matching_idx) == 0) {
+        matching_idx <- which(!is.na(trimmed_addresses) & tolower(trimmed_addresses) == tolower(input$selected_address))
+      }
 
-      # Show first few addresses for debugging
-      message("First 3 addresses in data: ")
-      for (i in 1:min(3, length(trimmed_addresses))) {
-        message("  [", i, "] '", trimmed_addresses[i], "'")
+      if (length(matching_idx) > 0) {
+        chosen_idx <- matching_idx[1]
+        if (length(matching_idx) > 1) {
+          # Prefer the most recent sale record if a sale-date column is available.
+          date_cols <- names(rv$adf_transformed)[grepl("datesold|sold.?date|sale.?date|close.?date", names(rv$adf_transformed), ignore.case = TRUE)]
+          if (length(date_cols) > 0) {
+            parsed_dates <- suppressWarnings(as.Date(rv$adf_transformed[[date_cols[1]]][matching_idx]))
+            if (any(!is.na(parsed_dates))) {
+              chosen_idx <- matching_idx[which.max(parsed_dates)]
+            }
+          }
+          showNotification(
+            "Multiple records found for this address. Loaded one matching record; use the picker context (date/price) to choose a specific sale.",
+            type = "warning",
+            duration = 6
+          )
+        }
+        selected_df <- rv$adf_transformed[chosen_idx, , drop = FALSE]
       }
     }
-    message("============================")
 
-    # Compare trimmed addresses since dropdown values are trimmed (line 2093)
-    # IMPORTANT: Use !is.na() to prevent NA addresses from producing NA rows in subset
-    matching_rows <- rv$adf_transformed[!is.na(trimmed_addresses) & trimmed_addresses == input$selected_address, ]
-
-    if (nrow(matching_rows) > 0) {
-      property_row <- matching_rows[1, ]
-      # Store this as a reactive value to trigger input updates
+    if (!is.null(selected_df) && nrow(selected_df) > 0) {
+      property_row <- selected_df[1, , drop = FALSE]
       rv$selected_property <- property_row
       rv$subject_fresh_load <- TRUE  # Flag to ignore cached browser input values
 
-      # Debug: log what we're loading
-      message("=== LOADING SUBJECT PROPERTY ===")
-      message("Address: ", input$selected_address)
-      message("Columns in property_row: ", paste(names(property_row), collapse = ", "))
-      if ("BA" %in% names(property_row)) message("BA value: ", property_row$BA)
-      message("subject_fresh_load set to: ", rv$subject_fresh_load)
-      message("================================")
-
-      # DIRECTLY UPDATE INPUT VALUES using updateNumericInput/updateSelectInput
-      # This is more reliable than relying on renderUI to pick up changed reactive values
+      # DIRECTLY UPDATE INPUT VALUES using updateNumericInput/updateSelectInput.
       subject_cols <- if (!is.null(rv$field_classification)) {
         get_subject_columns(
           rv$field_classification,
@@ -1402,21 +1460,22 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
           if (is.numeric(col_data)) {
             updateNumericInput(session, input_id, value = as.numeric(new_value))
-            message("Updated numeric input ", input_id, " to ", new_value)
           } else if (is.factor(col_data) || is.character(col_data)) {
             updateSelectInput(session, input_id, selected = as.character(new_value))
-            message("Updated select input ", input_id, " to ", new_value)
           }
         }
       }
 
+      address_cols <- names(property_row)[grepl("address|street", names(property_row), ignore.case = TRUE)]
+      selected_address <- if (length(address_cols) > 0) as.character(property_row[[address_cols[1]]][1]) else "selected property"
+
       showNotification(
-        paste("Property selected:", input$selected_address),
+        paste("Property selected:", selected_address),
         type = "message"
       )
     } else {
       showNotification(
-        paste("Could not find property:", input$selected_address, "- address may not match data"),
+        "Could not find the selected property record. Try selecting again from the quick-pick list.",
         type = "error"
       )
     }
