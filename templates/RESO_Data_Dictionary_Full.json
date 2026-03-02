@@ -1,0 +1,1370 @@
+{
+  "AccessibilityFeatures": {
+    "definition": "A list or description of the accessibility features included in the sale/lease.",
+    "synonyms": []
+  },
+  "LotSizeAcres": {
+    "definition": "The total acres of the lot. This field is related to Lot Size Area and Lot Size Units and must be in sync with the values represented in those fields. Lot Size Source also applies to this field when used.",
+    "synonyms": []
+  },
+  "PrivateRemarks": {
+    "definition": "Remarks that may contain security or proprietary information and should be restricted from public view.",
+    "synonyms": ["AgentRemarks", "ConfidentialRemarks"]
+  },
+  "AnchorsCoTenants": {
+    "definition": "The main or most notable tenants as well as other tenants of the shopping center or mall in which the commercial property is located.",
+    "synonyms": []
+  },
+  "Appliances": {
+    "definition": "A list of the appliances that will be included in the sale/lease of the property.",
+    "synonyms": []
+  },
+  "MLSAreaMajor": {
+    "definition": "The major marketing area name, as defined by the MLS or other nongovernmental organization. If there is only one MLS area in use, it must be the MLSAreaMajor.",
+    "synonyms": ["MarketingArea", "MLSArea"]
+  },
+  "ParcelNumber": {
+    "definition": "A number used to uniquely identify a parcel or lot. This number is typically issued by the county or county assessor. The assessor's parcel number (APN) format varies from county to county. It is recommended that all parcel numbers are transmitted without dashes or hyphens.",
+    "synonyms": ["APN", "AssessorsParcelNumber", "TaxID", "AssessorNumber"]
+  },
+  "LeaseAssignableYN": {
+    "definition": "Indicates whether or not the lease at the current location of the business can be assigned to another party.",
+    "synonyms": []
+  },
+  "AssociationAmenities": {
+    "definition": "The amenities provided by the homeowner association, mobile park or complex (e.g., pool, clubhouse).",
+    "synonyms": ["AssociationRules", "AssociationInfo", "HOAAmenities"]
+  },
+  "AssociationFee": {
+    "definition": "A fee paid by the homeowner to the homeowner association that is used for upkeep of common areas, the neighborhood or other association-related benefits.",
+    "synonyms": ["HOAFee", "CAM Charge", "Condo Charge"]
+  },
+  "AssociationFeeFrequency": {
+    "definition": "The frequency the association fee is paid (e.g., weekly, monthly, annually, bimonthly, one time).",
+    "synonyms": "HOAFeeFrequency"
+  },
+  "AssociationFee2": {
+    "definition": "A fee paid by the homeowner to the second of two homeowner associations that is used for upkeep of common areas, the neighborhood or other association-related benefits.",
+    "synonyms": "HOAFee2"
+  },
+  "AssociationFee2Frequency": {
+    "definition": "The frequency the association fee is paid (e.g., weekly, monthly, annually, bimonthly, one time).",
+    "synonyms": "HOAFeeFrequency2"
+  },
+  "AssociationName": {
+    "definition": "The name of the association.",
+    "synonyms": []
+  },
+  "AssociationName2": {
+    "definition": "The name of the second of two homeowner associations.",
+    "synonyms": "HOAName2"
+  },
+  "AssociationPhone": {
+    "definition": "The North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "AssociationPhone2": {
+    "definition": "The phone number of the second of two homeowner associations. North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "HOAPhone2"
+  },
+  "AssociationYN": {
+    "definition": "Indicates if there a homeowner association. A separate Y/N field is needed because not all associations have dues.",
+    "synonyms": "HOAYN"
+  },
+  "PropertyAttachedYN": {
+    "definition": "Indicates whether or not the primary structure is attached to another structure that is not included in the sale (i.e., one unit of a duplex). This flag may be True/False, Yes/No or a list of attached or detached. As with all flags, the field may be null. In some systems, this information may be part of the property subtype.",
+    "synonyms": "StructureAttachedYN"
+  },
+  "BelowGradeFinishedArea": {
+    "definition": "The finished area within the structure that is below ground.",
+    "synonyms": []
+  },
+  "BathroomsTotalInteger": {
+    "definition": "The simple sum of the number of bathrooms. For example, for a property with two full bathrooms and one half bathroom, the Bathrooms Total Integer would be 3. Expressing this example as 2.5 would require a non-standard field name. Decimal-based bathrooms are not recommended, they are possible via the Data Dictionary's extensibility.",
+    "synonyms": []
+  },
+  "BathroomsFull": {
+    "definition": "A room containing all four of the four elements constituting a bath: toilet, sink, bathtub, shower head (in tub or stall). Some may considered a sink, toilet and tub (without a shower) a full bath, while others may consider that to be a three-quarters bath. In the event that the BathroomsThreeQuarter field is not in use, this field may represent the sum of all full and three-quarters bathrooms.",
+    "synonyms": "FullBaths"
+  },
+  "BathroomsHalf": {
+    "definition": "A room containing two of the four elements constituting a bath: toilet, sink, bathtub, shower head (in a tub or stall). A half bath will typically contain a sink and toilet.",
+    "synonyms": "HalfBaths"
+  },
+  "BathroomsOneQuarter": {
+    "definition": "A room containing one of the four elements constituting a bath: toilet, sink, bathtub, shower head (in tub or stall). Examples include a vanity with a sink or a water closet (WC), which is a room with only a toilet.",
+    "synonyms": "QuarterBaths"
+  },
+  "BathroomsThreeQuarter": {
+    "definition": "A room containing three of the four elements constituting a bath: toilet, sink, bathtub, shower head (in a tub or stall). A typical three-quarters bath will contain a sink, toilet and shower. Some may considered a sink, toilet and tub (without a shower) a three-quarters bath, while others consider this to be a full bath.",
+    "synonyms": "ThreeQuarterBaths"
+  },
+  "BedroomsTotal": {
+    "definition": "The total number of bedrooms in the dwelling.",
+    "synonyms": []
+  },
+  "TaxBlock": {
+    "definition": "A type of legal description for land in developed areas where streets or other rights-of-ways delineate large parcels of land referred to as divided into lots on which homes or other types of developments are built. An example would read \"Lot 12 of Block 45 of Tract 3002 of the City of San Dunes, Desert County.\" Such a description would also reference an official plat filed with the clerk or recorder for that area which shows the location of the block and often the dimensions of the lots therein.",
+    "synonyms": "Block"
+  },
+  "BuilderName": {
+    "definition": "The name of the builder of the property or builder's tract.",
+    "synonyms": []
+  },
+  "SubdivisionName": {
+    "definition": "A neighborhood, community, complex or builder tract.",
+    "synonyms": "Builder's Tract"
+  },
+  "BuildingFeatures": {
+    "definition": "The features or amenities of the building or business park.",
+    "synonyms": []
+  },
+  "BuildingName": {
+    "definition": "The name of the building or business park.",
+    "synonyms": []
+  },
+  "BusinessName": {
+    "definition": "The name of the business being sold.",
+    "synonyms": []
+  },
+  "CableTvExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "CapRate": {
+    "definition": "The equivalent to the return on investment you would receive if you pay cash for a property. The ratio between the net operating income produced by an asset and its capital cost (the original price paid to buy the asset) or alternatively its current market value.",
+    "synonyms": "CapitalizationRate"
+  },
+  "City": {
+    "definition": "The city in the listing address.",
+    "synonyms": []
+  },
+  "CoListAgentAOR": {
+    "definition": "The Co-listing Agent's board or association of REALTORS®.",
+    "synonyms": "CoListMemberAOR"
+  },
+  "BusinessType": {
+    "definition": "The type of business being sold (e.g., Retail, Wholesale, Grocery, Food & Bev).",
+    "synonyms": []
+  },
+  "CoListAgentDirectPhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberDirectPhone"
+  },
+  "CoListAgentEmail": {
+    "definition": "The email address of the co-listing agent.",
+    "synonyms": "CoListMemberEmail"
+  },
+  "CoListAgentFax": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberFax"
+  },
+  "CoListAgentFirstName": {
+    "definition": "The first name of the co-listing agent.",
+    "synonyms": "CoListMemberFirstName"
+  },
+  "CoListAgentHomePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberHomePhone"
+  },
+  "CoListAgentLastName": {
+    "definition": "The last name of the co-listing agent.",
+    "synonyms": "CoListMemberLastName"
+  },
+  "CoListAgentMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": "CoListMemberMlsld"
+  },
+  "CoListAgentPager": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberPager"
+  },
+  "CoListAgentStateLicense": {
+    "definition": "The license of the co-listing agent. Multiple licenses should be separated with a comma and space.",
+    "synonyms": "CoListMemberStateLicense"
+  },
+  "CoListAgentTollFreePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberTollFreePhone"
+  },
+  "CoListAgentVoiceMail": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberVoiceMail"
+  },
+  "CoListAgentVoiceMailExt": {
+    "definition": "The extension of the given phone number, if applicable.",
+    "synonyms": "CoListMemberVoiceMailExt"
+  },
+  "CoListOfficeAOR": {
+    "definition": "The co-listing office's board or association of REALTORS®.",
+    "synonyms": []
+  },
+  "CoListOfficeFax": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "CoListOfficeMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": []
+  },
+  "CoListOfficeName": {
+    "definition": "The legal name of the brokerage co-representing the seller.",
+    "synonyms": []
+  },
+  "CoListOfficePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "CoListOfficePhoneExt": {
+    "definition": "The extension of the given phone number, if applicable.",
+    "synonyms": []
+  },
+  "SpecialLicenses": {
+    "definition": "Special licenses required/used by the business being sold (e.g., Beer/Wine, Class H, Professional, Gambling, None).",
+    "synonyms": []
+  },
+  "CommonInterest": {
+    "definition": "A type of ownership in a property that is composed of an individual lot or unit and a share of the ownership or use of common areas. A Common Interest Development (CID) is usually governed by a recorded set of Covenants, Conditions & Restrictions (CC&Rs).",
+    "synonyms": []
+  },
+  "CommonWalls": {
+    "definition": "A multi-select list with options like 1 Common Wall, 2 Common Walls, No Common Walls, No One Above, No One Below. Implementation should include rules preventing illogical selection combinations and to ensure consistency with the Property Attached Y/N field.",
+    "synonyms": []
+  },
+  "CommunityFeatures": {
+    "definition": "A list of features related to or available within the community.",
+    "synonyms": []
+  },
+  "TaxTract": {
+    "definition": "A type of legal description for land in developed areas where streets or other rights-of-ways delineate large parcels of land referred to as divided into lots on which homes or other types of developments are built. An example would read \"Lot 12 of Block 45 of Tract 3002 of the City of San Dunes, Desert County.\" Such a description would also reference an official plat filed with the clerk or recorder for that area which shows the location of the block and often the dimensions of the lots therein.",
+    "synonyms": "Tract"
+  },
+  "ConcessionsAmount": {
+    "definition": "The dollar amount of the concessions. If the concessions are made by the seller, some may subtract this value from the sales price as a means of calculating their own true price. If concessions are made by the buyer, some may add this amount to the sale price to create their own true price. Concessions made by both buyer and seller should be subtracted from each other, providing a net value. Details of this calculation should be added to the Concessions Comments field.",
+    "synonyms": []
+  },
+  "ConcessionsComments": {
+    "definition": "The comments describing the concessions made by the buyer or the seller.",
+    "synonyms": []
+  },
+  "ConstructionMaterials": {
+    "definition": "A list of the materials that were used in the construction of the property.",
+    "synonyms": []
+  },
+  "Contingency": {
+    "definition": "A list of contingencies that must be satisfied in order to complete the transaction.",
+    "synonyms": "Contingencies"
+  },
+  "Cooling": {
+    "definition": "A list describing the cooling or air conditioning features of the property.",
+    "synonyms": []
+  },
+  "CoolingYN": {
+    "definition": "Indicates whether or not the property has some form of cooling or air conditioning.",
+    "synonyms": []
+  },
+  "CoBuyerAgentAOR": {
+    "definition": "The co-buyer agent's board or association of REALTORS®.",
+    "synonyms": "CoBuyerMemberAOR"
+  },
+  "CoBuyerAgentFirstName": {
+    "definition": "The first name of the buyer's co-agent.",
+    "synonyms": "CoBuyerMemberFirstName"
+  },
+  "CoBuyerAgentLastName": {
+    "definition": "The last name of the buyer's co-agent.",
+    "synonyms": "CoBuyerMemberLastName"
+  },
+  "CoBuyerAgentMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": "CoBuyerMemberMlsId"
+  },
+  "CoBuyerAgentStateLicense": {
+    "definition": "The license of the co-buyers' agent. Multiple licenses should be separated with a comma and space.",
+    "synonyms": "CoBuyerMemberStateLicense"
+  },
+  "CoBuyerOfficeAOR": {
+    "definition": "The co-buyer's office's board or association of REALTORS®.",
+    "synonyms": []
+  },
+  "CoBuyerOfficeMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": []
+  },
+  "CoBuyerOfficeName": {
+    "definition": "The legal name of the brokerage co-representing the buyer.",
+    "synonyms": []
+  },
+  "Country": {
+    "definition": "The country abbreviation in a postal address.",
+    "synonyms": []
+  },
+  "CountyOrParish": {
+    "definition": "The county, parish or other regional authority.",
+    "synonyms": "County"
+  },
+  "CumulativeDaysOnMarket": {
+    "definition": "The cumulative number of days the property is on market, as defined by the MLS business rules.",
+    "synonyms": ["CDOM", "PropertyDaysOnMarket", "DOMP", "PDOM"]
+  },
+  "CarportSpaces": {
+    "definition": "The number of carport spaces included in the sale.",
+    "synonyms": []
+  },
+  "BackOnMarketDate": {
+    "definition": "The date a listing, which had previously gone off market, went back to being on market. This date typically will reflect contractual dates. System timestamp should leverage the term Timestamp rather than Date in the field name.",
+    "synonyms": []
+  },
+  "CloseDate": {
+    "definition": "With for-sale listings, this is the date the purchase agreement was fulfilled. With lease listings, it is the date the requirements were fulfilled, such as contract and/or deposit. This is the date entered by the agent reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS.",
+    "synonyms": ["SoldDate", "DateSold", "COE", "COEDate", "DateLeased", "DateRented", "DateLeaseBegins", "EffectiveLeaseDate"]
+  },
+  "LandLeaseExpirationDate": {
+    "definition": "The expiration date of the land lease when the land is not included in the sale but is leased.",
+    "synonyms": []
+  },
+  "LeaseExpiration": {
+    "definition": "The expiration date of the lease for the current location of the business.",
+    "synonyms": []
+  },
+  "PurchaseContractDate": {
+    "definition": "With for-sale listings, this represents the date an offer was accepted and the listing was no longer on market. This is the date entered by the agent reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS. With lease listings, this may represent a meeting of the minds to lease but with some contractual requirements yet to be fulfilled, such as contract signing or receipt of the deposit.",
+    "synonyms": ["PendingDate", "DatePending", "UnderContractDate", "ContractDate", "LeasePending", "PendingLeaseDate", "LeaseAgreementDate"]
+  },
+  "ListingContractDate": {
+    "definition": "The effective date of the agreement between the seller and the seller's broker. This is the date entered by the agent reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS.",
+    "synonyms": ["ListingDate", "DateOfListing", "ListDate", "AgreementDate"]
+  },
+  "ExpirationDate": {
+    "definition": "The date when the listing agreement will expire. This is the date entered by the agent reflecting when the change contractually occurred or will occur, not a timestamp of when the change was made in the MLS. The expiration date of listings, prior to their expiration, cancellation, sale or lease, is confidential information and should be restricted to the agent and their managers, partners or broker.",
+    "synonyms": ["DateExpired", "Expired"]
+  },
+  "WithdrawnDate": {
+    "definition": "The date that the listing was withdrawn from the market. This is not when a listing contract was canceled or closed, but a withdrawal from the market while the contract between the seller and listing agent is still in effect and an offer has not been accepted. This is the date entered by the agent reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS.",
+    "synonyms": []
+  },
+  "OffMarketDate": {
+    "definition": "The date the listing was taken off market. Where possible, this date represents the date entered by the agent, reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS.",
+    "synonyms": "DateOffMarket"
+  },
+  "OnMarketDate": {
+    "definition": "The date the listing was placed on market. Where possible, this date is reflective of the date entered by the agent reflecting when the change occurred contractually, not a timestamp of when the change was made in the MLS.",
+    "synonyms": []
+  },
+  "ContractStatusChangeDate": {
+    "definition": "The date of the listing's contractual status change. This is not necessarily the time the agent made the change in the MLS system, but rather the date of the contractual change.",
+    "synonyms": ["StatusDate", "StatusChange"]
+  },
+  "DaysOnMarket": {
+    "definition": "The number of days the listing is on market, as defined by the MLS business rules.",
+    "synonyms": ["DOM", "ListingDaysOnMarket", "DOML", "LDOM", "ADOM", "ActiveDaysOnMarket", "AgentDaysOnMarket"]
+  },
+  "DirectionFaces": {
+    "definition": "The compass direction that the main entrance to the building faces (e.g., North, South, East, West, Northeast, Southwest). It may also be known as the building exposure.",
+    "synonyms": "BuildingExposure"
+  },
+  "Disclosures": {
+    "definition": "Legal or pertinent information that should be disclosed to potential buyer's agents.",
+    "synonyms": ["Legal", "LegalDisclosures"]
+  },
+  "DistanceToBusComments": {
+    "definition": "A textual description of the distance to local bus stops.",
+    "synonyms": []
+  },
+  "DistanceToElectricComments": {
+    "definition": "Provides details about the property's access to serviceable electrical utility and the distance to it.",
+    "synonyms": []
+  },
+  "DistanceToFreewayComments": {
+    "definition": "A textual description of the distance to freeways.",
+    "synonyms": []
+  },
+  "DistanceToGasComments": {
+    "definition": "Provides details about the property's access to serviceable natural gas utility and the distance to it.",
+    "synonyms": []
+  },
+  "DistanceToPhoneServiceComments": {
+    "definition": "Provides details about the property's access to phone service and the distance to it.",
+    "synonyms": []
+  },
+  "DistanceToPlaceofWorshipComments": {
+    "definition": "A textual description of the distance to local places of worship.",
+    "synonyms": []
+  },
+  "DistanceToSchoolsComments": {
+    "definition": "A textual description of the distance to local schools.",
+    "synonyms": []
+  },
+  "DistanceToSewerComments": {
+    "definition": "Provides details about the property's access to sewer or septic service and the distance to it.",
+    "synonyms": []
+  },
+  "DistanceToShoppingComments": {
+    "definition": "A description of the distance to primary shopping sources, such as groceries, gasoline, clothing or department stores.",
+    "synonyms": []
+  },
+  "DistanceToStreetComments": {
+    "definition": "Provides details about the property's access to a maintained road or street adjacent to the lot, conditions of access and distance to a maintained road.",
+    "synonyms": []
+  },
+  "DistanceToWaterComments": {
+    "definition": "Provides details about the property's access to serviceable water utility and the distance to it.",
+    "synonyms": []
+  },
+  "DOH1": {
+    "definition": "The Department of Housing decal number for the mobile or manufactured home. For the first or only unit/section, use DOH 1 over DOH 2 or 3.",
+    "synonyms": "Unit1HCDHUDDECAL"
+  },
+  "DOH2": {
+    "definition": "The Department of Housing decal number for the mobile or manufactured home. For two units/sections, use DOH 1 and 2 over DOH 3.",
+    "synonyms": "Unit2HCDHUDDECAL"
+  },
+  "DOH3": {
+    "definition": "The Department of Housing decal number for the mobile or manufactured home. For two units/sections, use DOH 1 and 2 over DOH 3.",
+    "synonyms": "Unit3HCDHUDDECAL"
+  },
+  "DoorFeatures": {
+    "definition": "A list of features or description of the doors included in the sale/lease.",
+    "synonyms": []
+  },
+  "Electric": {
+    "definition": "A list of electric-service related features of the property (e.g., 110 Volt, 3 Phase, 220 Volt, RV Hookup). Note: the previous Electric field was renamed to DistanceToElectricComments.",
+    "synonyms": []
+  },
+  "ElectricExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "Elevation": {
+    "definition": "The elevation of the property in relation to sea level. Use the Elevation Units field to communicate the unit of measurement (i.e., feet, meters).",
+    "synonyms": []
+  },
+  "EntryLevel": {
+    "definition": "A numeric field that describes the level within the structure, single-family residence (SFR) or a unit in a building, where the main entry to the dwelling is located. When a unit has one floor, it is implicit that this is also the level of the unit itself.",
+    "synonyms": "Unit Floor Number"
+  },
+  "EntryLocation": {
+    "definition": "A description of the main entry way to the property (e.g., elevator, ground level w/ steps, ground level w/o steps, top level).",
+    "synonyms": "Entry Description"
+  },
+  "ExteriorFeatures": {
+    "definition": "A list of features or a description of the exterior of the property included in the sale/lease.",
+    "synonyms": []
+  },
+  "Fencing": {
+    "definition": "A list of types of fencing found at the property being sold.",
+    "synonyms": []
+  },
+  "BuyerFinancing": {
+    "definition": "A list of options that describe the type of financing used. This field is used when setting a listing to Closed (i.e., Cash, FHA Loan, etc.).",
+    "synonyms": []
+  },
+  "FireplaceYN": {
+    "definition": "Does the property include a fireplace.",
+    "synonyms": []
+  },
+  "FireplaceFeatures": {
+    "definition": "A list of features or a description of the fireplace(s) included in the sale/lease.",
+    "synonyms": []
+  },
+  "Flooring": {
+    "definition": "A list of the type(s) of flooring found within the property.",
+    "synonyms": []
+  },
+  "FoundationDetails": {
+    "definition": "A list of the type(s) of foundation on which the property sits.",
+    "synonyms": []
+  },
+  "NumberOfFullTimeEmployees": {
+    "definition": "The current number of individuals employed by the business on a full-time basis.",
+    "synonyms": []
+  },
+  "Furnished": {
+    "definition": "The property being leased is furnished, unfurnished or partially furnished.",
+    "synonyms": []
+  },
+  "FurnitureReplacementExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "AttachedGarageYN": {
+    "definition": "A flag indicating whether or not the garage is attached to the dwelling.",
+    "synonyms": []
+  },
+  "GardenerExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "FuelExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "GreenEnergyEfficient": {
+    "definition": "A pick list of general green attributes such as energy efficient doors or appliances without naming specific elements with ratings that may wane over time.",
+    "synonyms": []
+  },
+  "GreenEnergyGeneration": {
+    "definition": "The methods of generating power that are included in the sale or lease.",
+    "synonyms": []
+  },
+  "GreenIndoorAirQuality": {
+    "definition": "A pick list of indoor air quality measures without naming specific elements with ratings that may wane over time.",
+    "synonyms": []
+  },
+  "GreenLocation": {
+    "definition": "A pick list describing efficiencies involved with the property's location such as walkability or transportation proximity without naming specific elements with ratings that may wane over time.",
+    "synonyms": []
+  },
+  "GreenSustainability": {
+    "definition": "A pick list of sustainable elements used in the construction of the structure without naming specific elements with ratings that may wane over time.",
+    "synonyms": []
+  },
+  "GreenWaterConservation": {
+    "definition": "A pick list of general water conserving attributes of the property such as landscaping or reclamation without naming specific elements with ratings that may wane over time.",
+    "synonyms": []
+  },
+  "CoListAgentMobilePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "CoListMemberMobilePhone"
+  },
+  "Heating": {
+    "definition": "A list describing the heating features of the property.",
+    "synonyms": []
+  },
+  "HeatingYN": {
+    "definition": "Indicates whether or not the property has heating.",
+    "synonyms": []
+  },
+  "InsuranceExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "InteriorFeatures": {
+    "definition": "A list of features or a description of the interior of the property included in the sale/lease.",
+    "synonyms": []
+  },
+  "InternetAddressDisplayYN": {
+    "definition": "Indicates whether or not the seller has allowed the listing address to be displayed on Internet sites.",
+    "synonyms": []
+  },
+  "InternetEntireListingDisplayYN": {
+    "definition": "Indicates whether or not the seller has allowed the listing to be displayed on Internet sites.",
+    "synonyms": []
+  },
+  "LockBoxLocation": {
+    "definition": "A field describing the location of the lockbox.",
+    "synonyms": "KeySafeLocation"
+  },
+  "LockBoxSerialNumber": {
+    "definition": "The serial number of the lockbox placed on the property.",
+    "synonyms": "KeySafeSerialNumber."
+  },
+  "LockBoxType": {
+    "definition": "A field describing the type of lockbox.",
+    "synonyms": "KeySafeType"
+  },
+  "LandLeaseYN": {
+    "definition": "The land is not included in the sale and a lease exists.",
+    "synonyms": "LandFeeLease"
+  },
+  "LandLeaseAmount": {
+    "definition": "When the land is not included in the sale, but is leased, the amount of the lease. This is the space rent for mobile homes in a park.",
+    "synonyms": "SpaceRent"
+  },
+  "Latitude": {
+    "definition": "The geographic latitude of some reference point on the property, specified in degrees and decimal parts. Positive numbers must not include the plus symbol.",
+    "synonyms": []
+  },
+  "LaundryFeatures": {
+    "definition": "Add this pick list of features and locations where the laundry is located in the property being sold (i.e., Gas Dryer Hookup, In Kitchen, In Garage, etc.).",
+    "synonyms": []
+  },
+  "LeasableArea": {
+    "definition": "The area that may be leased within the commercial property.",
+    "synonyms": []
+  },
+  "LeasableAreaUnits": {
+    "definition": "A pick list of the unit of measurement for the area (e.g., Square Feet, Square Meters).",
+    "synonyms": []
+  },
+  "LeaseConsideredYN": {
+    "definition": "Indicates whether or not the seller will consider leasing the property instead of selling.",
+    "synonyms": ["IsLeaseConsidered", "LeaseConsidered"]
+  },
+  "LandLeaseAmountFrequency": {
+    "definition": "The frequency in which the land lease fee is paid when the land is not included in the sale but is leased.",
+    "synonyms": "FeeFrequency"
+  },
+  "ExistingLeaseType": {
+    "definition": "Information about the status of the existing lease on the property (i.e., Net, NNN, NN, Gross, Absolute Net, Escalation Clause, Ground Lease).",
+    "synonyms": []
+  },
+  "MobileLength": {
+    "definition": "The length of the mobile/manufactured home.",
+    "synonyms": []
+  },
+  "CurrentUse": {
+    "definition": "A list of the type(s) of current use of the property. The current use of the property is an important factor in understanding the overall condition of the land and determining appropriateness for intended use.",
+    "synonyms": []
+  },
+  "OwnerPays": {
+    "definition": "A list of expenses for the property paid for by the owner as opposed to the tenant (e.g., Water, Trash, Electric).",
+    "synonyms": []
+  },
+  "License1": {
+    "definition": "The license number of the mobile or manufactured home, also known as the Department of Housing label/insignia number. For the first or only unit/section, use License 1 over License 2 or 3.",
+    "synonyms": ["Unit1LicenseNo", "Unit1Insignia"]
+  },
+  "License2": {
+    "definition": "The license number of the mobile or manufactured home, also known as the Department of Housing label/insignia number. For two units/sections, use License 1 and 2 over License 3.",
+    "synonyms": ["Unit2LicenseNo", "Unit2Insignia"]
+  },
+  "License3": {
+    "definition": "The license number of the mobile or manufactured home, also known as the Department of Housing label/insignia number. For two units/sections, use License 1 and 2 over License 3.",
+    "synonyms": ["Unit3LicenseNo", "Unit3Insignia"]
+  },
+  "LicensesExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "ListPrice": {
+    "definition": "The current price of the property as determined by the seller and the seller's broker. For auctions, this is the minimum or reserve price.",
+    "synonyms": ["AskingPrice", "PriceListing", "PriceListed"]
+  },
+  "Exclusions": {
+    "definition": "Elements of the property that will not be included in the sale (e.g., chandeliers removed prior to close).",
+    "synonyms": "ExclusionRemarks"
+  },
+  "Inclusions": {
+    "definition": "Portable elements of the property that will be included in the sale.",
+    "synonyms": "InclusionRemarks"
+  },
+  "ListPriceLow": {
+    "definition": "The lower price used for Value Range Pricing. The List Price must be greater than or equal to the ListPriceLow.",
+    "synonyms": ["LowPriceRange", "LowRangePrice"]
+  },
+  "OriginalListPrice": {
+    "definition": "The original price of the property on the initial agreement between the seller and the seller's broker.",
+    "synonyms": "OriginalPrice"
+  },
+  "ListAgentAOR": {
+    "definition": "The listing agent's board or association of REALTORS®.",
+    "synonyms": "ListMemberAOR"
+  },
+  "ListAgentMobilePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberMobilePhone"
+  },
+  "ListAgentDirectPhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberDirectPhone"
+  },
+  "ListAgentEmail": {
+    "definition": "The email address of the listing agent.",
+    "synonyms": "ListMemberEmail"
+  },
+  "ListAgentFax": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberFax"
+  },
+  "ListAgentFirstName": {
+    "definition": "The first name of the listing agent.",
+    "synonyms": "ListMemberFirstName"
+  },
+  "ListAgentHomePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberHomePhone"
+  },
+  "ListAgentLastName": {
+    "definition": "The last name of the listing agent.",
+    "synonyms": "ListMemberLastName"
+  },
+  "ListAgentMlsId": {
+    "definition": "The local, well-known identifier for the member. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": "ListMemberMlsld"
+  },
+  "ListAgentPager": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberPager"
+  },
+  "ListAgentStateLicense": {
+    "definition": "The license of the listing agent. Separate multiple licenses with a comma and space.",
+    "synonyms": "ListMemberStateLicense"
+  },
+  "ListAgentTollFreePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberTollFreePhone"
+  },
+  "ListAgentVoiceMail": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": "ListMemberVoiceMail"
+  },
+  "ListAgentVoiceMailExt": {
+    "definition": "The extension of the given phone number, if applicable.",
+    "synonyms": "ListMemberVoiceMailExt"
+  },
+  "ListOfficeAOR": {
+    "definition": "The listing office's board or association of REALTORS®.",
+    "synonyms": []
+  },
+  "ListOfficeFax": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "ListOfficeMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": []
+  },
+  "ListOfficeName": {
+    "definition": "The legal name of the brokerage representing the seller.",
+    "synonyms": []
+  },
+  "ListOfficePhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "ListOfficePhoneExt": {
+    "definition": "The extension of the given phone number, if applicable.",
+    "synonyms": []
+  },
+  "ListingTerms": {
+    "definition": "Terms of the listing such as Lien Release, Subject to Court Approval or Owner Will Carry. Also may include options that describe the financing terms that are acceptable to the seller (i.e., Cash, Assumable, FHA, etc.).",
+    "synonyms": "Terms"
+  },
+  "Longitude": {
+    "definition": "The geographic longitude of some reference point on the property, specified in degrees and decimal parts. Positive numbers must not include the plus symbol.",
+    "synonyms": []
+  },
+  "LotSizeDimensions": {
+    "definition": "The dimensions of the lot minimally represented as length and width (i.e. 250 x 180) or a measurement of all sides of the polygon representing the property lines of the property (i.e., 30 x 50 x 120 x 60 x 22).",
+    "synonyms": []
+  },
+  "LotFeatures": {
+    "definition": "A list of features or a description of the lot included in the sale/lease.",
+    "synonyms": []
+  },
+  "TaxLot": {
+    "definition": "A type of legal description for land in developed areas where streets or other rights-of-ways delineate large parcels of land referred to as divided into lots on which homes or other types of developments are built. An example would read \"Lot 12 of Block 45 of Tract 3002 of the City of San Dunes, Desert County.\" Such a description would also reference an official plat filed with the clerk or recorder for that area which shows the location of the block and often the dimensions of the lots therein.",
+    "synonyms": "Lot"
+  },
+  "LotSizeArea": {
+    "definition": "The total area of the lot. See Lot Size Units for the units of measurement (e.g., square feet, square meters, acres).",
+    "synonyms": []
+  },
+  "GarageSpaces": {
+    "definition": "The number of spaces in the garage(s).",
+    "synonyms": []
+  },
+  "LotSizeSource": {
+    "definition": "The source of the measurements. This may be a pick list of options showing the source of the measurement (e.g., Agent, Assessor, Estimate).",
+    "synonyms": []
+  },
+  "LotSizeSquareFeet": {
+    "definition": "The total square footage of the lot. This field is related to Lot Size Area and Lot Size Units and must be in sync with the values represented in those fields. Lot Size Source also applies to this field when used.",
+    "synonyms": []
+  },
+  "MaintenanceExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "Make": {
+    "definition": "The make of the mobile or manufactured home.",
+    "synonyms": []
+  },
+  "ParkManagerPhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "OriginatingSystemID": {
+    "definition": "The RESO Unique Organization Identifier's (UOI) OrganizationUniqueId of the originating record provider. The originating system is the system with authoritative control over the record (e.g., the name of the MLS where the team was input). In cases where the originating system was not where the record originated (the authoritative system), see the Originating System fields.",
+    "synonyms": []
+  },
+  "MobileHomeRemainsYN": {
+    "definition": "Indicates whether or not the mobile home is to remain and be included in the sale of the property.",
+    "synonyms": []
+  },
+  "Model": {
+    "definition": "The model of the mobile or manufactured home.",
+    "synonyms": []
+  },
+  "BuilderModel": {
+    "definition": "The builder's model name or number for the property.",
+    "synonyms": []
+  },
+  "GrossIncome": {
+    "definition": "The actual current income from rent and all other revenue-generating sources.",
+    "synonyms": ["Current Income", "Actual Income"]
+  },
+  "ListingId": {
+    "definition": "The well-known identifier for the listing being shown. The value may be identical to that of the listing key, but the listing ID is intended to be the value used by a human to retrieve the information about a specific listing. In a multiple-originating system or a merged system, this value may not be unique and may require the use of the provider system to create a synthetic unique value.",
+    "synonyms": []
+  },
+  "NetOperatingIncome": {
+    "definition": "The net operating income is the revenue from a property after operating expenses have been deducted but before deducting income taxes and financing expenses (interest and principal payments). For example, gross income - operating expenses = net operating income (NOI).",
+    "synonyms": []
+  },
+  "NewTaxesExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "GrossScheduledIncome": {
+    "definition": "The maximum amount of annual rent collected if the property were 100% occupied all year and all tenants paid their rent.",
+    "synonyms": "Proforma Income"
+  },
+  "LotSizeUnits": {
+    "definition": "A pick list of the unit of measurement for the area (e.g., Square Feet, Square Meters, Acres).",
+    "synonyms": []
+  },
+  "NumberOfBuildings": {
+    "definition": "The total number of separate buildings included in the income property.",
+    "synonyms": "NumberOfUnitsBuildings"
+  },
+  "NumberOfSeparateElectricMeters": {
+    "definition": "The total number of separate electric meters on the property.",
+    "synonyms": []
+  },
+  "NumberOfSeparateGasMeters": {
+    "definition": "The total number of separate gas meters on the property.",
+    "synonyms": []
+  },
+  "NumberOfUnitsLeased": {
+    "definition": "The total number of units currently under a lease agreement.",
+    "synonyms": []
+  },
+  "ParkingTotal": {
+    "definition": "The total number of parking spaces included in the sale.",
+    "synonyms": []
+  },
+  "NumberOfUnitsTotal": {
+    "definition": "Total number of units included in the income property, occupied or unoccupied.",
+    "synonyms": []
+  },
+  "NumberOfPads": {
+    "definition": "The number of pads or spaces in the mobile home park.",
+    "synonyms": []
+  },
+  "NumberOfSeparateWaterMeters": {
+    "definition": "The total number of separate water meters on the property.",
+    "synonyms": []
+  },
+  "OccupantType": {
+    "definition": "A field that describes the type of occupant (i.e., Owner, Tenant, Vacant).",
+    "synonyms": []
+  },
+  "OccupantName": {
+    "definition": "The name of the current occupant, if any, of the property being sold.",
+    "synonyms": []
+  },
+  "OccupantPhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "OfficeType": {
+    "definition": "The type of business conducted by the office (e.g., Appraisal, MLS, Mortgage).",
+    "synonyms": []
+  },
+  "OnMarketTimestamp": {
+    "definition": "The transactional timestamp automatically recorded by the MLS system representing the most recent date/time the listing's status was set to Active or Backup. This also includes initial input of the listing to Active/Backup or from a draft or approval status to Active/Backup.",
+    "synonyms": []
+  },
+  "OperatingExpense": {
+    "definition": "The costs associated with the operation and maintenance of an income-producing property.",
+    "synonyms": []
+  },
+  "HoursDaysOfOperation": {
+    "definition": "A simplified enumerated list of the days and hours of operation of the business being sold (e.g., Open 24 Hours, Open Seven Days). For more detailed descriptions, use the HoursDaysofOperationDescription field.",
+    "synonyms": []
+  },
+  "OtherExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "OtherPhoneExt": {
+    "definition": "The extension of the given phone number (if applicable).",
+    "synonyms": []
+  },
+  "OtherPhoneNumber": {
+    "definition": "The phone option allowing members to convey additional phone numbers other than those already covered by the MemberMobilePhone, MemberFax and other specified fields.",
+    "synonyms": []
+  },
+  "OtherStructures": {
+    "definition": "A list of structures other than the main dwelling (e.g., Guest House, Barn, Shed).",
+    "synonyms": []
+  },
+  "OwnerPhone": {
+    "definition": "North American 10-digit phone numbers should be in the format of ###-###-#### (separated by hyphens). Other conventions should use the common local standard. International numbers should be preceded by a plus symbol.",
+    "synonyms": []
+  },
+  "OwnerName": {
+    "definition": "The name of the owner of the property being sold.",
+    "synonyms": []
+  },
+  "OwnershipType": {
+    "definition": "The current type of ownership of the business being sold (e.g., Corporation, LLC, Sole Proprietor, Partnership).",
+    "synonyms": []
+  },
+  "TaxMapNumber": {
+    "definition": "Some systems of parcel identification incorporate a method that utilizes a county identifier, a tax book number, a tax map number and a parcel identification number.",
+    "synonyms": []
+  },
+  "TaxParcelLetter": {
+    "definition": "Some systems of parcel identification incorporate a method that utilizes a county identifier, a tax book number, a tax map number and a parcel identification number.",
+    "synonyms": []
+  },
+  "ParkName": {
+    "definition": "The name of the mobile home park or corporate/commercial park.",
+    "synonyms": []
+  },
+  "ParkingFeatures": {
+    "definition": "A list of features about or a description of the parking included in the sale/lease.",
+    "synonyms": []
+  },
+  "NumberOfPartTimeEmployees": {
+    "definition": "The current number of individuals employed by the business on a part-time basis.",
+    "synonyms": []
+  },
+  "PatioAndPorchFeatures": {
+    "definition": "A list of features about or a description of the patio or porch included in the sale/lease.",
+    "synonyms": []
+  },
+  "PestControlExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "PetsAllowed": {
+    "definition": "Indicates whether or not pets are allowed at the property being leased, usually as a list of yes, no and more detailed restrictions/allowances.",
+    "synonyms": []
+  },
+  "PhotosChangeTimestamp": {
+    "definition": "A system-generated timestamp of when the last update or change to the photos for this listing was made.",
+    "synonyms": "PhotoChangeTimestamp"
+  },
+  "PhotosCount": {
+    "definition": "The total number of pictures or photos included with the listing.",
+    "synonyms": "PhotoCount"
+  },
+  "PoolFeatures": {
+    "definition": "A list of features about or a description of a pool included in the sale/lease.",
+    "synonyms": []
+  },
+  "PoolExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "PoolPrivateYN": {
+    "definition": "The property has a privately owned pool that is included in the sale/lease.",
+    "synonyms": []
+  },
+  "Possession": {
+    "definition": "A list defining when possession will occur (i.e., COE, COE+1, etc.).",
+    "synonyms": []
+  },
+  "AvailabilityDate": {
+    "definition": "The date the property will be available for possession/occupation.",
+    "synonyms": []
+  },
+  "ZoningDescription": {
+    "definition": "A list of descriptions of the zoning of the property. The zoning codes are often nondescriptive and variant. This provides a more descriptive form of the zoning for the property (e.g., Agricultural, Residential, Rezone Possible). Specific zone codes must be added to the Zoning field.",
+    "synonyms": []
+  },
+  "PossibleUse": {
+    "definition": "A list of the type(s) of possible or best uses of the property. Probable use gives a good indication of what the best use or potential use of the property could be (e.g., Residential, Recreational, Commercial, Retail).",
+    "synonyms": []
+  },
+  "ProfessionalManagementExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations. This is for a management company. Use ManagerExpense for a individual manager.",
+    "synonyms": "ManagementCompanyExpense"
+  },
+  "PreviousListPrice": {
+    "definition": "The most recent previous list price of the listing.",
+    "synonyms": ["PreviousPrice", "LastPrice", "ListPriorPrice"]
+  },
+  "TaxAnnualAmount": {
+    "definition": "The annual property tax amount as of the last assessment made by the taxing authority.",
+    "synonyms": []
+  },
+  "PublicRemarks": {
+    "definition": "Text remarks that may be displayed to the public. In an MLS, it is the field where information is entered for the public. This information is intended to be visible online. This is typically information that describes the selling points of the building and/or land for sale. Local conditions and rules will determine what such content can contain. Generally, any information pertaining to entry to the property, the seller and/or tenant, or listing member contact information is excluded. In other systems, these remarks will be determined by local business rules.",
+    "synonyms": ["PropertyDescription", "InternetRemarks", "Remarks"]
+  },
+  "TaxYear": {
+    "definition": "The year in which the last assessment of the property value/tax was made.",
+    "synonyms": []
+  },
+  "PropertyType": {
+    "definition": "A list of types of properties (e.g., Residential, Lease, Income, Land, Mobile, Commercial Sale).",
+    "synonyms": []
+  },
+  "PropertySubType": {
+    "definition": "A list of types of residential and residential lease properties (e.g., Single-Family Residence, Condominium, Townhouse) or a list of subtypes for mobile (e.g., Manufactured Home, Manufactured On Land).",
+    "synonyms": []
+  },
+  "LeaseRenewalOptionYN": {
+    "definition": "Indicates whether or not there is an option to renew the lease at the current location of the business.",
+    "synonyms": []
+  },
+  "LeaseRenewalCompensation": {
+    "definition": "A list of compensations other than the original selling office compensation (i.e., Paid on Renewal, Paid on Tenant Purchase, No Renewal Commission, Call Listing Office, etc.).",
+    "synonyms": []
+  },
+  "RentControlYN": {
+    "definition": "Indicates whether or not the property is in a rent-control area.",
+    "synonyms": []
+  },
+  "RentIncludes": {
+    "definition": "A list of services or items that the tenant is not responsible to pay.",
+    "synonyms": []
+  },
+  "Roof": {
+    "definition": "A list describing the roof style type (e.g., Spanish Tile, Composite, Shake).",
+    "synonyms": []
+  },
+  "RoomType": {
+    "definition": "The type of room being described by the other fields in the PropertyRooms resource.",
+    "synonyms": []
+  },
+  "RVParkingDimensions": {
+    "definition": "The dimensions of the RV parking area minimally represented as length and width (i.e., 25' x 18') or a measurement of all sides of the polygon representing the usable RV parking space (i.e., 33' x 15' x 12' x 60').",
+    "synonyms": []
+  },
+  "SpecialListingConditions": {
+    "definition": "A list of options that describe the type of sale (e.g., Standard, REO, Short Sale, Probate, Auction, NOD) at the time of listing.",
+    "synonyms": ["SaleType", "REO", "ShortSale", "NoticeOfDefault", "Foreclosure"]
+  },
+  "HighSchoolDistrict": {
+    "definition": "The name of the high school district having a catchment area that includes the associated property. When only one school district is used, this field should be used over any other junior high or elementary school districts.",
+    "synonyms": "SchoolDistrict"
+  },
+  "ElementarySchool": {
+    "definition": "The name of the primary school having a catchment area that includes the associated property.",
+    "synonyms": []
+  },
+  "HighSchool": {
+    "definition": "The name of the high school having a catchment area that includes the associated property.",
+    "synonyms": []
+  },
+  "MiddleOrJuniorSchool": {
+    "definition": "The name of the junior or middle school having a catchment area that includes the associated property.",
+    "synonyms": []
+  },
+  "SeatingCapacity": {
+    "definition": "The seating capacity of the business being sold.",
+    "synonyms": []
+  },
+  "SecurityFeatures": {
+    "definition": "A list describing the security features included in the sale/lease.",
+    "synonyms": []
+  },
+  "BuyerAgentAOR": {
+    "definition": "The buyer agent's board or association of REALTORS®.",
+    "synonyms": "BuyerMemberAOR"
+  },
+  "BuyerAgentStateLicense": {
+    "definition": "The license of the buyer agent. Multiple licenses should be separated with a comma and space.",
+    "synonyms": "BuyerMemberStateLicense"
+  },
+  "BuyerAgentFirstName": {
+    "definition": "The first name of the buyer's agent.",
+    "synonyms": "BuyerMemberFirstName"
+  },
+  "BuyerAgentLastName": {
+    "definition": "The last name of the buyer's agent.",
+    "synonyms": "BuyerMemberLastName"
+  },
+  "BuyerAgentMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": "BuyerMemberMlsId"
+  },
+  "BuyerOfficeAOR": {
+    "definition": "The buyer's office's board or association of REALTORS®.",
+    "synonyms": []
+  },
+  "BuyerOfficeMlsId": {
+    "definition": "The local, well-known identifier. This value may not be unique, specifically in the case of aggregation systems, and it should be the identifier from the original system.",
+    "synonyms": []
+  },
+  "BuyerBrokerageCompensation": {
+    "definition": "The total compensation to be paid to the buyer's brokerage for this sale, expressed as either a percentage or a constant currency amount.",
+    "synonyms": ["SOComp", "SellingOfficeCompensation", "BuyerBrokerCompensation", "SOC", "Commission", "BuyerAgencyCompensation"]
+  },
+  "BuyerBrokerageCompensationType": {
+    "definition": "A list of types to clarify the value entered in the BuyerBrokerageCompensation field. For example, $, % or some other clarification of the BuyerAgencyCompensation field.",
+    "synonyms": ["SOCompType", "SellingOfficeCompensationType", "BuyerBrokerCompensationType", "SOCType", "CommissionType", "BuyerAgencyCompensationType"]
+  },
+  "BuyerOfficeName": {
+    "definition": "The legal name of the brokerage representing the buyer.",
+    "synonyms": []
+  },
+  "ClosePrice": {
+    "definition": "The amount of money paid by the purchaser to the seller for the property under the agreement.",
+    "synonyms": ["SellingPrice", "SoldPrice", "SalePrice", "PriceSold", "LeasePrice", "RentalPrice", "PurchasePrice"]
+  },
+  "SeniorCommunityYN": {
+    "definition": "Indicates whether or not a community is a senior community.",
+    "synonyms": []
+  },
+  "SerialU": {
+    "definition": "The serial number of the mobile or manufactured home. For the first or only unit/section, use Serial U over Serial X or Serial XX.",
+    "synonyms": "Unit1SerialNo"
+  },
+  "SerialX": {
+    "definition": "The serial number of the mobile or manufactured home. For two units/sections, Serial U should be used first, Serial X second.",
+    "synonyms": "Unit2SerialNo"
+  },
+  "SerialXX": {
+    "definition": "The serial number of the mobile or manufactured home. For two units/sections, Serial U should be used first, Serial X (or Serial XX) second.",
+    "synonyms": "Unit3SerialNo"
+  },
+  "ListingService": {
+    "definition": "The type or level of service the listing member will be providing to the selling homeowner (e.g., Full Service, Limited Service, Entry Only). This will typically be a single selection.",
+    "synonyms": ["ServiceType", "ServiceLevel"]
+  },
+  "Sewer": {
+    "definition": "A list describing the sewer or septic features of a property.",
+    "synonyms": []
+  },
+  "ShowingContactName": {
+    "definition": "The name of the contact for the showing of the listed property.",
+    "synonyms": []
+  },
+  "ShowingContactPhone": {
+    "definition": "A telephone number that should be called to arrange showing the property.",
+    "synonyms": "ShowingPhone"
+  },
+  "ShowingContactPhoneExt": {
+    "definition": "The extension of the given phone number, if applicable.",
+    "synonyms": []
+  },
+  "ShowingContactType": {
+    "definition": "The type of contact for the showing (i.e., Agent, Broker, Seller).",
+    "synonyms": []
+  },
+  "ShowingInstructions": {
+    "definition": "Remarks that detail the seller's instructions for showing the subject property. Showing instructions may include contact information, showing times, notice required or other information. These remarks are privileged and are not for public viewing.",
+    "synonyms": "ShowingRemarks"
+  },
+  "SignOnPropertyYN": {
+    "definition": "Indicates whether or not there a sign on the property.",
+    "synonyms": []
+  },
+  "Skirt": {
+    "definition": "A list of types of mobile home skirting.",
+    "synonyms": []
+  },
+  "SpaFeatures": {
+    "definition": "A list of features or a description of the spa included in the sale/lease.",
+    "synonyms": []
+  },
+  "SpaYN": {
+    "definition": "Indicates whether or not the property has a spa.",
+    "synonyms": ["Jacuzzi", "HotTub"]
+  },
+  "TenantPays": {
+    "definition": "A list of services or items that the tenant is responsible to pay.",
+    "synonyms": "TenantExpense"
+  },
+  "BuildingAreaTotal": {
+    "definition": "The total area of the structure, including both finished and unfinished areas.",
+    "synonyms": []
+  },
+  "LivingArea": {
+    "definition": "The total livable area within the structure.",
+    "synonyms": []
+  },
+  "LivingAreaSource": {
+    "definition": "The source of the measurements. This is a pick list of options showing the source of the measurement (e.g., Agent, Assessor, Estimate).",
+    "synonyms": []
+  },
+  "StateOrProvince": {
+    "definition": "Text field containing the accepted postal abbreviation for the state or province.",
+    "synonyms": []
+  },
+  "StandardStatus": {
+    "definition": "The status of the listing as it reflects the state of the contract between the listing agent and seller, or an agreement with a buyer (e.g., Active, Active Under Contract, Canceled, Closed, Expired, Pending, Withdrawn). This is a single-select field.",
+    "synonyms": ["NormalizedListingStatus", "RetsStatus"]
+  },
+  "Levels": {
+    "definition": "The number of levels in the property being sold (e.g., One, Two, Three or More, Multi/Split). A discreet horizontal plane of interior living space (excluding basements).",
+    "synonyms": []
+  },
+  "StoriesTotal": {
+    "definition": "The total number of floors in the building. In the case of multi-dwelling structures, this is the entire structure and not the individual dwelling being sold.",
+    "synonyms": "StoriesBuildingTotal"
+  },
+  "StreetDirPrefix": {
+    "definition": "The direction indicator that precedes the listed property's street name.",
+    "synonyms": []
+  },
+  "StreetDirSuffix": {
+    "definition": "The direction indicator that follows a listed property's street address.",
+    "synonyms": []
+  },
+  "StreetName": {
+    "definition": "The street name portion of a listed property's street address.",
+    "synonyms": []
+  },
+  "StreetNumber": {
+    "definition": "The street number portion of a listed property's street address. In some areas, the street number may contain nonnumerical characters. This field can also contain extensions and modifiers to the street number, such as \"1/2\" or \"B.\" This street number field should not include prefixes, direction or suffixes.",
+    "synonyms": []
+  },
+  "StreetNumberNumeric": {
+    "definition": "The integer portion of the street number.",
+    "synonyms": []
+  },
+  "StreetSuffix": {
+    "definition": "The suffix portion of a listed property's street address.",
+    "synonyms": []
+  },
+  "StreetSuffixModifier": {
+    "definition": "Allows for the entry of a unique street suffix that was not found in the Street Suffix pick list or to extend or prefix the suffix.",
+    "synonyms": ["Street Suffix Alternate", "Street Suffix Extension."]
+  },
+  "PropertyCondition": {
+    "definition": "A list describing the condition of the property and any structures included in the sale.",
+    "synonyms": ["StructuralCondition", "Condition"]
+  },
+  "ArchitecturalStyle": {
+    "definition": "A list describing the style of the structure (e.g., Victorian, Ranch, Craftsman).",
+    "synonyms": "Style"
+  },
+  "DocumentsCount": {
+    "definition": "The total number of documents or supplements included with the listing.",
+    "synonyms": []
+  },
+  "DocumentsChangeTimestamp": {
+    "definition": "The system-generated timestamp of when the last update or change to the documents for this listing was made.",
+    "synonyms": []
+  },
+  "SuppliesExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "SyndicationRemarks": {
+    "definition": "For MLSs that host a separate \"Public Remarks\" for syndication purposes, this field should be defaulted to contain public remarks. Upon broker decision, it should be modified to include contact and other information denied by IDX rules but allowed under local and national regulations.",
+    "synonyms": "AdvertisingRemarks"
+  },
+  "TotalActualRent": {
+    "definition": "Total actual rent currently being collected from tenants of the income property.",
+    "synonyms": []
+  },
+  "LeaseTerm": {
+    "definition": "A pick list of lengths that represent the length of the lease (e.g., Weekly, Month to Month, 6-Month Lease, 12-Month Lease, 2-Year Lease).",
+    "synonyms": []
+  },
+  "PriceChangeTimestamp": {
+    "definition": "The transactional timestamp automatically recorded by the MLS system representing the date/time the listing's price was last changed.",
+    "synonyms": ["PriceChangeDateTime", "PriceChange"]
+  },
+  "ModificationTimestamp": {
+    "definition": "The date/time the TransactionManagement record was last modified.",
+    "synonyms": []
+  },
+  "OffMarketTimestamp": {
+    "definition": "The transactional timestamp automatically recorded by the MLS system representing the most recent date/time the listing's status was set to an off-market status (not Active or Backup)",
+    "synonyms": []
+  },
+  "OriginalEntryTimestamp": {
+    "definition": "The date/time the roster (team or office) record was originally input into the source system.",
+    "synonyms": []
+  },
+  "StatusChangeTimestamp": {
+    "definition": "The transactional timestamp automatically recorded by the MLS system representing the date/time the listing's status was last changed.",
+    "synonyms": "StatusDateTime"
+  },
+  "Topography": {
+    "definition": "The state of the surface of the land included with the property (i.e., flat, rolling, etc.).",
+    "synonyms": []
+  },
+  "UnitNumber": {
+    "definition": "A text field containing the unit number or portion of a larger building or complex that should appear following the street suffix or, if it exists, the street suffix direction in the street address (e.g., Apt G, #55).",
+    "synonyms": ["ApartmentNumber", "SpaceNumber", "Suite"]
+  },
+  "TrashExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "Utilities": {
+    "definition": "A list of the utilities for the property being sold/leased.",
+    "synonyms": []
+  },
+  "VacancyAllowance": {
+    "definition": "An estimate of the amount of rent that may be foregone because of unoccupied units.",
+    "synonyms": []
+  },
+  "VacancyAllowanceRate": {
+    "definition": "An estimate of the percent of rent that may be foregone because of unoccupied units.",
+    "synonyms": []
+  },
+  "View": {
+    "definition": "A view as seen from the listed property.",
+    "synonyms": []
+  },
+  "ViewYN": {
+    "definition": "The property has a view.",
+    "synonyms": []
+  },
+  "VirtualTourURLUnbranded": {
+    "definition": "A text field that holds the Uniform Resource Locator (URL) for an unbranded virtual tour of the property.",
+    "synonyms": []
+  },
+  "InternetAutomatedValuationDisplayYN": {
+    "definition": "Indicates whether or not the seller allows the listing to be displayed with an automated valuation model (AVM) on Internet sites.",
+    "synonyms": []
+  },
+  "InternetConsumerCommentYN": {
+    "definition": "Indicates whether or not the seller allows a comment or blog system to be attached to the listing on Internet sites.",
+    "synonyms": []
+  },
+  "WaterBodyName": {
+    "definition": "The name, if known, of the body of water on which the property is located (e.g., lake name, river name, ocean name, sea name, canal name).",
+    "synonyms": ["LakeName", "RiverName", "OceanName"]
+  },
+  "WaterSewerExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "WaterSource": {
+    "definition": "A list of the source(s) of water for the property.",
+    "synonyms": []
+  },
+  "MobileWidth": {
+    "definition": "The width of the mobile/manufactured home.",
+    "synonyms": []
+  },
+  "WindowFeatures": {
+    "definition": "A list of features or a description of the windows included in the sale/lease.",
+    "synonyms": []
+  },
+  "WorkmansCompensationExpense": {
+    "definition": "The annual expense that is not paid directly by the tenant and is included in the Operating Expense calculations.",
+    "synonyms": []
+  },
+  "YearBuilt": {
+    "definition": "The year that an occupancy permit is first granted for the house or other local measure of initial habitability of the build. The type of definition permits an empty value with an attribute noting that it is an unknown date or that the building is new construction. While constraints have not been applied, convention at the time of adoption has this as a four-digit year value.",
+    "synonyms": []
+  },
+  "YearBuiltSource": {
+    "definition": "A list of sources of the year built (e.g., Appraiser, Assessor, Builder, Estimated).",
+    "synonyms": []
+  },
+  "YearEstablished": {
+    "definition": "The year the business being sold was established.",
+    "synonyms": []
+  },
+  "YearsCurrentOwner": {
+    "definition": "The number of years the current owner has had possession of the business.",
+    "synonyms": []
+  },
+  "PostalCode": {
+    "definition": "The postal code portion of a street or mailing address.",
+    "synonyms": ["ZipCode", "Zip"]
+  },
+  "PostalCodePlus4": {
+    "definition": "The last four digits of a nine-digit U.S. ZIP Code.",
+    "synonyms": ["Zip+4", "ZipPlus4"]
+  },
+  "Zoning": {
+    "definition": "A division of the city or county into areas of different permissible land uses. This field should be used for the short code that is commonly used. For full textual descriptions, please use the ZoningDescription field.",
+    "synonyms": []
+  }
+}

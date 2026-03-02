@@ -1,0 +1,38 @@
+# R / Shiny
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+rsconnect/
+
+# Output
+MappedData/
+*.xlsx
+*.png
+*.html
+
+# Data files - never commit MLS/real estate data
+*.csv
+!templates/*.csv
+sample_data/
+
+# System
+.DS_Store
+Thumbs.db
+nul
+
+# Environment
+.Renviron
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Temp/debug files
+RConsole*.txt
+CLAUDE_CODE_NOTES*.md
+
+# Claude
+.claude/
