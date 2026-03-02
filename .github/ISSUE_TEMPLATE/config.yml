@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: Ask a Question
+    url: https://github.com/CAA-EBV-CO-OP/CAADataBridge/discussions
+    about: Have a question? Start a discussion instead of opening an issue.
+  - name: Community of Asset Analysts (CAA)
+    url: https://www.valuemetrics.info/community
+    about: Learn more about the CAA community behind this project.
