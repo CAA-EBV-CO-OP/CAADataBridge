@@ -3431,6 +3431,10 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
         return()
       }
 
+      # Anchor model-training rows to source row IDs.
+      # qeDT/ctree may internally drop rows; rownames allow reliable back-mapping.
+      rownames(adf_for_tree) <- as.character(source_row_ids)
+
       incProgress(0.6, detail = "Training model...")
       rv$model_source_row_ids <- NULL
 
@@ -3448,6 +3452,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           # Note: adf_for_tree already has user exclusions and date columns removed
           base_data <- adf_for_tree[, !names(adf_for_tree) %in% has_condition_cols, drop = FALSE]
           base_source_row_ids <- source_row_ids
+          rownames(base_data) <- as.character(base_source_row_ids)
 
           # Remove any remaining Date columns
           base_data <- base_data[, !sapply(base_data, inherits, "Date"), drop = FALSE]
@@ -3466,6 +3471,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           if (sum(complete_rows) > 5) {  # Need at least 5 rows
             enhanced_data <- adf_for_tree[complete_rows, , drop = FALSE]
             enhanced_source_row_ids <- source_row_ids[complete_rows]
+            rownames(enhanced_data) <- as.character(enhanced_source_row_ids)
 
             # Remove any remaining Date columns
             enhanced_data <- enhanced_data[, !sapply(enhanced_data, inherits, "Date"), drop = FALSE]
@@ -3731,37 +3737,63 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
   get_subject_data <- reactive({
     req(rv$adf_transformed, rv$dt_model)
 
-    # Get all subject inputs
-    subject_inputs <- reactiveValuesToList(input)
-    subject_inputs <- subject_inputs[grepl("^subj_", names(subject_inputs))]
+    coerce_subject_value <- function(col_name, value) {
+      if (is.null(value) || (length(value) == 1 && is.na(value))) {
+        return(NULL)
+      }
+      if (!col_name %in% names(rv$adf_transformed)) {
+        return(value)
+      }
 
-    if (length(subject_inputs) == 0) {
-      return(NULL)
+      adf_col <- rv$adf_transformed[[col_name]]
+      if (is.factor(adf_col)) {
+        return(factor(as.character(value), levels = levels(adf_col)))
+      }
+      if (is.character(adf_col)) {
+        return(as.character(value))
+      }
+      if (is.integer(adf_col)) {
+        return(suppressWarnings(as.integer(value)))
+      }
+      if (is.numeric(adf_col)) {
+        return(suppressWarnings(as.numeric(value)))
+      }
+
+      value
     }
 
-    # Build subject data frame
+    # Build subject data frame.
+    # If a row was loaded from data/profile, treat that row as authoritative.
     subject_df <- data.frame(row.names = 1)
+    if (!is.null(rv$selected_property) && nrow(rv$selected_property) > 0) {
+      for (col_name in names(rv$selected_property)) {
+        val <- rv$selected_property[[col_name]][1]
+        if (is.null(val) || (is.character(val) && val == "") || is.na(val)) {
+          next
+        }
+        coerced <- coerce_subject_value(col_name, val)
+        if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
+          subject_df[[col_name]] <- coerced
+        }
+      }
+    }
 
+    # Collect current subject inputs. Only use inputs for columns not already set by
+    # selected_property to avoid stale browser cache overriding quick-picked records.
+    subject_inputs <- reactiveValuesToList(input)
+    subject_inputs <- subject_inputs[grepl("^subj_", names(subject_inputs))]
     for (input_name in names(subject_inputs)) {
       col_name <- gsub("^subj_", "", input_name)
       value <- subject_inputs[[input_name]]
-
-      # Skip empty values
       if (is.null(value) || (is.character(value) && value == "")) {
         next
       }
-
-      # Match the data type from ADF
-      if (col_name %in% names(rv$adf_transformed)) {
-        adf_col <- rv$adf_transformed[[col_name]]
-
-        if (is.factor(adf_col)) {
-          subject_df[[col_name]] <- factor(value, levels = levels(adf_col))
-        } else if (is.character(adf_col)) {
-          subject_df[[col_name]] <- as.character(value)
-        } else {
-          subject_df[[col_name]] <- value
-        }
+      if (col_name %in% names(subject_df)) {
+        next
+      }
+      coerced <- coerce_subject_value(col_name, value)
+      if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
+        subject_df[[col_name]] <- coerced
       }
     }
 
@@ -3781,17 +3813,9 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
       for (col in fill_cols) {
         if (col %in% names(rv$selected_property) && !col %in% names(subject_df)) {
-          val <- rv$selected_property[[col]][1]
-          if (!is.null(val) && !is.na(val)) {
-            if (col %in% names(rv$adf_transformed)) {
-              adf_col <- rv$adf_transformed[[col]]
-              if (is.numeric(adf_col)) {
-                val <- suppressWarnings(as.numeric(val))
-              } else if (is.factor(adf_col) || is.character(adf_col)) {
-                val <- as.character(val)
-              }
-            }
-            subject_df[[col]] <- val
+          coerced <- coerce_subject_value(col, rv$selected_property[[col]][1])
+          if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
+            subject_df[[col]] <- coerced
           }
         }
       }
@@ -3906,17 +3930,25 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
                 prev_count != length(cms_indices)
 
               # Map model-row indices back to the transformed source data used for subject selection.
-              if (!is.null(rv$model_source_row_ids) &&
-                  length(rv$model_source_row_ids) >= max(cms_indices)) {
+              source_idx <- integer(0)
+
+              # Preferred: use training rownames (explicit source row IDs) from the fitted model.
+              train_row_ids <- suppressWarnings(as.integer(rownames(train_data)))
+              if (length(train_row_ids) >= max(cms_indices) && all(!is.na(train_row_ids[cms_indices]))) {
+                source_idx <- train_row_ids[cms_indices]
+              } else if (!is.null(rv$model_source_row_ids) &&
+                         length(rv$model_source_row_ids) >= max(cms_indices)) {
+                # Fallback: positional mapping captured at build time.
                 source_idx <- rv$model_source_row_ids[cms_indices]
-                source_idx <- source_idx[!is.na(source_idx) &
-                                           source_idx >= 1 &
-                                           source_idx <= nrow(rv$adf_transformed)]
-                rv$cms <- rv$adf_transformed[source_idx, , drop = FALSE]
               } else {
-                # Fallback for legacy models built before row-ID tracking.
-                rv$cms <- rv$adf_transformed[cms_indices, , drop = FALSE]
+                # Last-resort legacy behavior.
+                source_idx <- cms_indices
               }
+
+              source_idx <- source_idx[!is.na(source_idx) &
+                                         source_idx >= 1 &
+                                         source_idx <= nrow(rv$adf_transformed)]
+              rv$cms <- rv$adf_transformed[source_idx, , drop = FALSE]
               rv$subject <- subject_df
               rv$subject_node <- subject_node
 
