@@ -28,7 +28,20 @@ host_ui <- page_navbar(
 
       # User greeting
       tags$h2(style = "margin-bottom: 5px;", "Welcome to CAA Collaborative"),
-      tags$p("Select an application to continue", style = "color: #666; margin-bottom: 30px;"),
+      tags$p("Select an application to continue.", style = "color: #666; margin-bottom: 6px;"),
+      tags$p("This is our sandbox for testing and refining workflows.", style = "color: #4a5568; margin-bottom: 24px;"),
+      tags$p(
+        "Learn more about evidence-based valuation, data science, and advancing appraisal methodologies.",
+        style = "color: #2d3748; margin-bottom: 16px;"
+      ),
+      tags$a(
+        href = "https://www.valuemetrics.info/community-of-asset-analysts",
+        target = "_blank",
+        rel = "noopener noreferrer",
+        class = "btn btn-outline-primary",
+        style = "margin-top: -10px; margin-bottom: 26px; font-weight: 600;",
+        icon("users"), " Connect to the Community"
+      ),
 
       # App choice buttons with descriptions
       div(

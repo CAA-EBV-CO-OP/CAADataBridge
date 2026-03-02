@@ -20,7 +20,19 @@ host_server <- function(input, output, session) {
   })
 
   observeEvent(input$home_choose_reports, {
-    showNotification("Report Forms coming soon!", type = "message", duration = 5)
+    showModal(modalDialog(
+      title = tagList(icon("clock"), " Report Forms Coming Soon"),
+      tags$p(
+        "The Report Forms module is not active yet in this sandbox.",
+        style = "margin-bottom: 8px;"
+      ),
+      tags$p(
+        "Use Column Mapper and Decision Trees for now. We'll enable Report Forms in a future update.",
+        style = "color: #555; margin-bottom: 0;"
+      ),
+      easyClose = TRUE,
+      footer = modalButton("Got it")
+    ))
   })
 
   # ==========================================================================
