@@ -25,6 +25,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     subject_node = NULL,
     model_comparison = NULL,    # Stores comparison metrics
     selected_property = NULL,   # Subject property loaded from data
+    selected_row_id = NULL,     # Source row ID selected via quick pick
     subject_fresh_load = FALSE, # Flag: TRUE when property just loaded, resets after UI renders
     observed_fix_buttons = character(0), # Track attached observers for dynamic buttons
     observed_inspect_buttons = character(0), # Track attached observers for inspect buttons
@@ -290,6 +291,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     rv$subject_node <- NULL
     rv$model_comparison <- NULL
     rv$selected_property <- NULL  # Clear any previously loaded subject property
+    rv$selected_row_id <- NULL
 
     # Load data based on file extension
     file_ext <- tools::file_ext(input$adf_file$name)
@@ -792,6 +794,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
       # Store as selected property
       rv$selected_property <- as.data.frame(subject_list, stringsAsFactors = FALSE)
+      rv$selected_row_id <- NULL
 
       showNotification(
         "Subject property loaded successfully!",
@@ -1301,10 +1304,23 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     df <- rv$adf_transformed
     address_cols <- names(df)[grepl("address|street", names(df), ignore.case = TRUE)]
     if (length(address_cols) == 0) return(NULL)
-    address_col <- address_cols[1]
+
+    # Pick the best address-like column if multiple candidates exist.
+    score_address_col <- function(col_name) {
+      vals <- trimws(as.character(df[[col_name]]))
+      non_empty <- sum(!is.na(vals) & nzchar(vals))
+      alpha_vals <- sum(grepl("[A-Za-z]", vals))
+      name_bonus <- if (grepl("^address$|streetaddress|propertyaddress", col_name, ignore.case = TRUE)) 1000 else 0
+      non_empty + (alpha_vals * 0.5) + name_bonus
+    }
+    address_scores <- vapply(address_cols, score_address_col, numeric(1))
+    address_col <- address_cols[which.max(address_scores)]
 
     addresses <- trimws(as.character(df[[address_col]]))
-    valid <- !is.na(addresses) & nzchar(addresses)
+    addresses <- gsub("[\r\n\t]+", " ", addresses)
+    addresses <- gsub("\\s+", " ", addresses)
+    # Require at least one letter to avoid malformed rows like "$860,000" appearing as addresses.
+    valid <- !is.na(addresses) & nzchar(addresses) & grepl("[A-Za-z]", addresses)
     if (!any(valid)) return(NULL)
 
     picker <- data.frame(
@@ -1319,7 +1335,10 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     if (!is.null(date_col)) {
       raw_dates <- as.character(df[[date_col]][valid])
       parsed_dates <- suppressWarnings(as.Date(raw_dates))
-      picker$date_text <- ifelse(!is.na(parsed_dates), format(parsed_dates, "%Y-%m-%d"), raw_dates)
+      date_text <- ifelse(!is.na(parsed_dates), format(parsed_dates, "%Y-%m-%d"), raw_dates)
+      date_text <- gsub("[\r\n\t]+", " ", date_text)
+      date_text <- gsub("\\s+", " ", date_text)
+      picker$date_text <- trimws(date_text)
     } else {
       picker$date_text <- NA_character_
     }
@@ -1334,35 +1353,35 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     if (!is.null(price_col)) {
       raw_price <- as.character(df[[price_col]][valid])
       num_price <- suppressWarnings(as.numeric(gsub("[,$[:space:]]", "", raw_price)))
-      picker$price_text <- ifelse(
+      price_text <- ifelse(
         !is.na(num_price),
         paste0("$", format(round(num_price, 0), big.mark = ",", scientific = FALSE, trim = TRUE)),
         raw_price
       )
+      price_text <- gsub("[\r\n\t]+", " ", price_text)
+      price_text <- gsub("\\s+", " ", price_text)
+      picker$price_text <- trimws(price_text)
     } else {
       picker$price_text <- NA_character_
     }
 
-    duplicate_address <- duplicated(picker$address) | duplicated(picker$address, fromLast = TRUE)
-    picker$label <- picker$address
-    if (any(duplicate_address)) {
-      context <- ifelse(
-        !is.na(picker$date_text) & nzchar(picker$date_text),
-        picker$date_text,
-        paste0("row ", picker$row_id)
-      )
-      context <- ifelse(
-        !is.na(picker$price_text) & nzchar(picker$price_text),
-        paste0(context, " | ", picker$price_text),
-        context
-      )
-      picker$label[duplicate_address] <- paste0(picker$address[duplicate_address], " | ", context[duplicate_address])
-    }
+    # Build consistent labels for all rows.
+    context <- ifelse(
+      !is.na(picker$date_text) & nzchar(picker$date_text),
+      picker$date_text,
+      ""
+    )
+    context <- ifelse(
+      !is.na(picker$price_text) & nzchar(picker$price_text),
+      ifelse(nzchar(context), paste0(context, " | ", picker$price_text), picker$price_text),
+      context
+    )
+    picker$label <- ifelse(nzchar(context), paste0(picker$address, " | ", context), picker$address)
 
     # Ensure labels are unique even if context collides.
     duplicate_label <- duplicated(picker$label) | duplicated(picker$label, fromLast = TRUE)
     if (any(duplicate_label)) {
-      picker$label[duplicate_label] <- paste0(picker$label[duplicate_label], " | row ", picker$row_id[duplicate_label])
+      picker$label[duplicate_label] <- paste0(picker$label[duplicate_label], " (row ", picker$row_id[duplicate_label], ")")
     }
 
     picker
@@ -1401,12 +1420,14 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     }
 
     selected_df <- NULL
+    resolved_row_id <- NA_integer_
     picker <- subject_picker_rows()
 
     # Primary path: use row ID from picker value (supports duplicate addresses safely).
     selected_row_id <- suppressWarnings(as.integer(input$selected_address))
     if (!is.null(picker) && !is.na(selected_row_id) && selected_row_id %in% picker$row_id) {
       selected_df <- rv$adf_transformed[selected_row_id, , drop = FALSE]
+      resolved_row_id <- selected_row_id
     }
 
     # Fallback path for legacy string selections: match by address text.
@@ -1437,12 +1458,14 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           )
         }
         selected_df <- rv$adf_transformed[chosen_idx, , drop = FALSE]
+        resolved_row_id <- chosen_idx
       }
     }
 
     if (!is.null(selected_df) && nrow(selected_df) > 0) {
       property_row <- selected_df[1, , drop = FALSE]
       rv$selected_property <- property_row
+      rv$selected_row_id <- if (!is.na(resolved_row_id)) resolved_row_id else NULL
       rv$subject_fresh_load <- TRUE  # Flag to ignore cached browser input values
 
       # DIRECTLY UPDATE INPUT VALUES using updateNumericInput/updateSelectInput.
@@ -1474,10 +1497,15 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       selected_address <- if (length(address_cols) > 0) as.character(property_row[[address_cols[1]]][1]) else "selected property"
 
       showNotification(
-        paste("Property selected:", selected_address),
+        if (!is.null(rv$selected_row_id)) {
+          paste("Property selected:", selected_address, "(row", rv$selected_row_id, ")")
+        } else {
+          paste("Property selected:", selected_address)
+        },
         type = "message"
       )
     } else {
+      rv$selected_row_id <- NULL
       showNotification(
         "Could not find the selected property record. Try selecting again from the quick-pick list.",
         type = "error"
@@ -1526,6 +1554,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
     if (length(example_list) > 0) {
       rv$selected_property <- as.data.frame(example_list, stringsAsFactors = FALSE)
+      rv$selected_row_id <- NULL
       rv$subject_fresh_load <- TRUE  # Flag to ignore cached browser input values
 
       # DIRECTLY UPDATE INPUT VALUES using updateNumericInput/updateSelectInput
@@ -1748,6 +1777,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
   # Clear subject button handler
   observeEvent(input$clear_subject, {
     rv$selected_property <- NULL
+    rv$selected_row_id <- NULL
     showNotification("Subject property cleared", type = "message", duration = 3)
   })
 
@@ -3763,9 +3793,25 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     }
 
     # Build subject data frame.
-    # If a row was loaded from data/profile, treat that row as authoritative.
+    # If quick-pick selected a source row, use that exact transformed row as authoritative.
     subject_df <- data.frame(row.names = 1)
-    if (!is.null(rv$selected_property) && nrow(rv$selected_property) > 0) {
+    selected_row_active <- !is.null(rv$selected_row_id) &&
+      isTRUE(rv$selected_row_id >= 1) &&
+      isTRUE(rv$selected_row_id <= nrow(rv$adf_transformed))
+
+    if (selected_row_active) {
+      source_row <- rv$adf_transformed[rv$selected_row_id, , drop = FALSE]
+      for (col_name in names(source_row)) {
+        val <- source_row[[col_name]][1]
+        if (is.null(val) || (is.character(val) && val == "") || is.na(val)) {
+          next
+        }
+        coerced <- coerce_subject_value(col_name, val)
+        if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
+          subject_df[[col_name]] <- coerced
+        }
+      }
+    } else if (!is.null(rv$selected_property) && nrow(rv$selected_property) > 0) {
       for (col_name in names(rv$selected_property)) {
         val <- rv$selected_property[[col_name]][1]
         if (is.null(val) || (is.character(val) && val == "") || is.na(val)) {
@@ -3778,22 +3824,24 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       }
     }
 
-    # Collect current subject inputs. Only use inputs for columns not already set by
-    # selected_property to avoid stale browser cache overriding quick-picked records.
-    subject_inputs <- reactiveValuesToList(input)
-    subject_inputs <- subject_inputs[grepl("^subj_", names(subject_inputs))]
-    for (input_name in names(subject_inputs)) {
-      col_name <- gsub("^subj_", "", input_name)
-      value <- subject_inputs[[input_name]]
-      if (is.null(value) || (is.character(value) && value == "")) {
-        next
-      }
-      if (col_name %in% names(subject_df)) {
-        next
-      }
-      coerced <- coerce_subject_value(col_name, value)
-      if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
-        subject_df[[col_name]] <- coerced
+    # For quick-picked records, keep the selected data row authoritative.
+    # For manual/profile subjects, allow subj_* inputs to populate missing columns.
+    if (!selected_row_active) {
+      subject_inputs <- reactiveValuesToList(input)
+      subject_inputs <- subject_inputs[grepl("^subj_", names(subject_inputs))]
+      for (input_name in names(subject_inputs)) {
+        col_name <- gsub("^subj_", "", input_name)
+        value <- subject_inputs[[input_name]]
+        if (is.null(value) || (is.character(value) && value == "")) {
+          next
+        }
+        if (col_name %in% names(subject_df)) {
+          next
+        }
+        coerced <- coerce_subject_value(col_name, value)
+        if (!is.null(coerced) && !(length(coerced) == 1 && is.na(coerced))) {
+          subject_df[[col_name]] <- coerced
+        }
       }
     }
 
