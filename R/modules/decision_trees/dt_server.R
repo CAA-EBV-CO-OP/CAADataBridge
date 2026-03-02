@@ -3769,14 +3769,28 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       return(NULL)
     }
 
-    # Add lat/long and other columns from rv$selected_property if available
-    # These columns don't have UI inputs but are needed for similarity comparison
+    # Backfill missing predictors from selected property row.
+    # Quick-pick uses real row values, but not every model column has a visible subject input
+    # (e.g., high-cardinality categorical fields). Fill those gaps here so node assignment is
+    # based on the same record values used in training.
     if (!is.null(rv$selected_property) && nrow(rv$selected_property) > 0) {
-      extra_cols <- c("longitude", "latitude", "SaleQtr")
-      for (col in extra_cols) {
+      train_cols <- tryCatch({
+        names(rv$dt_model$ctout@data@get("input"))
+      }, error = function(e) character(0))
+      fill_cols <- if (length(train_cols) > 0) train_cols else names(rv$selected_property)
+
+      for (col in fill_cols) {
         if (col %in% names(rv$selected_property) && !col %in% names(subject_df)) {
           val <- rv$selected_property[[col]][1]
           if (!is.null(val) && !is.na(val)) {
+            if (col %in% names(rv$adf_transformed)) {
+              adf_col <- rv$adf_transformed[[col]]
+              if (is.numeric(adf_col)) {
+                val <- suppressWarnings(as.numeric(val))
+              } else if (is.factor(adf_col) || is.character(adf_col)) {
+                val <- as.character(val)
+              }
+            }
             subject_df[[col]] <- val
           }
         }
