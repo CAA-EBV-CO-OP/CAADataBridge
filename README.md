@@ -12,6 +12,31 @@ A standalone Shiny app for mapping CSV columns to standardized field names for r
 
 **Version:** 2.4.0
 
+## Quick Start
+
+### 1. Open the project
+
+Open this folder in RStudio:
+
+`C:\Users\pryac\PR-Repo\CAACollaborative`
+
+### 2. Launch the app
+
+In the R console:
+
+```r
+source("launch.R")
+```
+
+`launch.R` checks required packages and tells you exactly which ones to install if anything is missing.
+
+### 3. Use the recommended mapping flow
+
+- If mapping to **CValR standard fields**: upload MLS data first and map normally.
+- If mapping to a **custom destination schema**: load the destination schema first, then upload MLS data.
+
+This keeps mapping focused on your chosen destination layout from the start.
+
 ## Important: This is a Local Application
 
 **This app runs on YOUR computer** - it does not connect to any online service. This means:
