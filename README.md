@@ -37,6 +37,23 @@ source("launch.R")
 
 This keeps mapping focused on your chosen destination layout from the start.
 
+### 4. Data Flow (Step-by-Step)
+
+#### Standard CValR flow
+
+1. Upload your MLS CSV/Excel file.
+2. Review auto-suggestions and adjust mappings.
+3. Apply mappings and export.
+
+#### Custom destination schema flow
+
+1. Check **Use destination schema**.
+2. Upload or select your destination schema/template first.
+3. Upload your MLS CSV/Excel file.
+4. Review destination-column mappings, then apply mappings and export.
+
+Loading the destination schema first prevents the extra remap feeling and keeps mapping aligned to your selected output schema.
+
 ## Important: This is a Local Application
 
 **This app runs on YOUR computer** - it does not connect to any online service. This means:
