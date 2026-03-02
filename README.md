@@ -62,11 +62,16 @@ about it!
 
 ## Quick Start
 
+### CAACollaborative Launcher Note
+
+In this combined repository, `launch.R` intentionally runs `app.R` (the modular app under `R/host` + `R/modules`).
+This avoids accidentally launching legacy root-level `ui.R`/`server.R` files when both app structures exist.
+
 ### Step 1: Launch the App
 
 **From R console or RStudio:**
 ```r
-shiny::runApp('C:/GitRepos/CValR_4.0/ColumnMapper/column_mapper.R')
+source("launch.R")
 ```
 
 **Or from command line:**

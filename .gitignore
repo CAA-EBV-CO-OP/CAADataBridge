@@ -33,6 +33,7 @@ nul
 # Temp/debug files
 RConsole*.txt
 CLAUDE_CODE_NOTES*.md
+Claude console notes.txt
 
 # Claude
 .claude/
