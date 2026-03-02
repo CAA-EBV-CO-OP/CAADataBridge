@@ -1,4 +1,4 @@
-# Column Mapper - A Shiny app for mapping CSV columns to standardized field names
+# Column Mapper - A Shiny app for mapping CSV columns to standard field names
 # License: MIT
 # Repository: https://github.com/PaulERayburn/CValR_4.0
 #
