@@ -722,9 +722,9 @@ databridge_server_logic <- function(input, output, session) {
     # Toggle destination schema controls enabled/disabled
     observeEvent(input$use_destination_schema, {
       if (isTRUE(input$use_destination_schema)) {
-        shinyjs::runjs("$('#dest_schema_controls').removeClass('disabled-section');")
+        shinyjs::runjs(paste0("$('#", ns("dest_schema_controls"), "').removeClass('disabled-section');"))
       } else {
-        shinyjs::runjs("$('#dest_schema_controls').addClass('disabled-section');")
+        shinyjs::runjs(paste0("$('#", ns("dest_schema_controls"), "').addClass('disabled-section');"))
         # Clear dest headers when unchecking (return to standard mode)
         rv$dest_headers <- character()
         destination_suggestion_cache(list())
@@ -803,7 +803,7 @@ databridge_server_logic <- function(input, output, session) {
         }
   
         updateCheckboxInput(session, "use_destination_schema", value = TRUE)
-        shinyjs::runjs("$('#dest_schema_controls').removeClass('disabled-section');")
+        shinyjs::runjs(paste0("$('#", ns("dest_schema_controls"), "').removeClass('disabled-section');"))
         showNotification(
           sprintf("✓ Destination schema loaded with %d columns! Next step: Upload your CSV data to map the columns.",
                  length(headers)),
@@ -924,7 +924,7 @@ databridge_server_logic <- function(input, output, session) {
         }
   
         updateCheckboxInput(session, "use_destination_schema", value = TRUE)
-        shinyjs::runjs("$('#dest_schema_controls').removeClass('disabled-section');")
+        shinyjs::runjs(paste0("$('#", ns("dest_schema_controls"), "').removeClass('disabled-section');"))
   
         showNotification(
           sprintf("✓ %s template loaded with %d fields!", template_info$name, length(headers)),
@@ -942,7 +942,7 @@ databridge_server_logic <- function(input, output, session) {
       id_analysis_result(NULL)
       id_conflicts_resolved(list())
       updateCheckboxInput(session, "use_destination_schema", value = FALSE)
-      shinyjs::runjs("$('#dest_schema_controls').addClass('disabled-section');")
+      shinyjs::runjs(paste0("$('#", ns("dest_schema_controls"), "').addClass('disabled-section');"))
       showNotification("Destination schema cleared.", type = "message", duration = 4)
     })
   
@@ -1474,7 +1474,7 @@ databridge_server_logic <- function(input, output, session) {
             column(3,
               tags$div(
                 style = "margin-top: 25px;",
-                downloadButton("download_mapping", "Save Mapping Profile",
+                downloadButton(ns("download_mapping"), "Save Mapping Profile",
                               class = "btn-warning",
                               style = "width: 100%; font-weight: bold;")
               )
@@ -2742,7 +2742,7 @@ databridge_server_logic <- function(input, output, session) {
               came_from_profile <- !is.null(profile_source) && identical(profile_source$source, "profile")
   
               # Get exclusions early to prevent re-applying excluded values
-              dest_col_exclusions <- current_exclusions
+              dest_col_exclusions <- field_exclusions()[[dest_col]] %||% character(0)
   
               # Check for existing selection - prioritize tracker over input (timing issue fix)
               # But skip excluded values to prevent infinite reactive loops
@@ -3193,13 +3193,13 @@ databridge_server_logic <- function(input, output, session) {
   
               # Detail text with synonyms
               edit_id <- paste0("edit_synonyms_", make.names(dest_col))
-              
+
               detail_text <- if (length(synonyms) > 0) {
                 tags$div(
                   style = "color:#666; margin:4px 0; font-size: 85%;",
                   tags$span("Also known as:", paste(head(synonyms, 5), collapse = ", ")),
                   actionLink(
-                      inputId = edit_id,
+                      inputId = ns(edit_id),
                       label = icon("pencil"),
                       style = "margin-left: 5px; color: #999;",
                       title = "Edit synonyms"
@@ -3210,7 +3210,7 @@ databridge_server_logic <- function(input, output, session) {
                   style = "color:#666; margin:4px 0; font-size: 85%;",
                   tags$span("Destination column - will appear in final output"),
                   actionLink(
-                      inputId = edit_id,
+                      inputId = ns(edit_id),
                       label = icon("pencil"),
                       style = "margin-left: 5px; color: #999;",
                       title = "Add synonyms"
@@ -4151,11 +4151,11 @@ databridge_server_logic <- function(input, output, session) {
                             tags$div(
                               style = "color: #2e7d32; font-size: 12px;",
                               icon("check"), " Bath split will be applied on export",
-                              actionLink(inputId = "baths_split_undo", label = "(undo)",
+                              actionLink(inputId = ns("baths_split_undo"), label = "(undo)",
                                          style = "margin-left: 8px; font-size: 11px; color: #666;")
                             )
                           } else {
-                            actionButton(inputId = "baths_split_accept",
+                            actionButton(inputId = ns("baths_split_accept"),
                                          label = tagList(icon("columns"), " Accept Bath Split"),
                                          class = "btn-sm btn-success", style = "width: 100%;")
                           }
@@ -4342,7 +4342,7 @@ databridge_server_logic <- function(input, output, session) {
                         style = "color:#666; margin:4px 0; font-size: 85%;",
                         tags$span("Also known as:", paste(head(meta$synonyms, 5), collapse = ", ")),
                         actionLink(
-                          inputId = std_edit_id,
+                          inputId = ns(std_edit_id),
                           label = icon("pencil"),
                           style = "margin-left: 5px; color: #999;",
                           title = "Edit synonyms"
@@ -4353,7 +4353,7 @@ databridge_server_logic <- function(input, output, session) {
                         style = "color:#666; margin:4px 0; font-size: 85%;",
                         tags$span(" "),
                         actionLink(
-                          inputId = std_edit_id,
+                          inputId = ns(std_edit_id),
                           label = icon("pencil"),
                           style = "margin-left: 5px; color: #999;",
                           title = "Add synonyms"
@@ -5853,12 +5853,12 @@ databridge_server_logic <- function(input, output, session) {
               ),
               footer = tagList(
                 modalButton("Cancel"),
-                actionButton(local_save_id, "Save Changes", class = "btn-primary")
+                actionButton(ns(local_save_id), "Save Changes", class = "btn-primary")
               ),
               easyClose = FALSE
             ))
           }, ignoreInit = TRUE)
-  
+
           # Save button in modal
           observeEvent(input[[local_save_id]], {
             req(input[[local_save_id]] > 0)
@@ -6061,11 +6061,11 @@ databridge_server_logic <- function(input, output, session) {
           tags$div(
             style = "color: #1565c0; font-size: 12px;",
             icon("check"), " SqFtTotal will be derived on export",
-            actionLink(inputId = "sqft_derive_undo", label = "(undo)",
+            actionLink(inputId = ns("sqft_derive_undo"), label = "(undo)",
                        style = "margin-left: 8px; font-size: 11px; color: #666;")
           )
         } else {
-          actionButton(inputId = "sqft_derive_accept",
+          actionButton(inputId = ns("sqft_derive_accept"),
                        label = tagList(icon("calculator"), " Accept Auto-Derive"),
                        class = "btn-sm btn-primary", style = "width: 100%;")
         }
@@ -6383,16 +6383,16 @@ databridge_server_logic <- function(input, output, session) {
               ),
               footer = tagList(
                 modalButton("Cancel"),
-                actionButton(local_save_id, "Save Changes", class = "btn-primary")
+                actionButton(ns(local_save_id), "Save Changes", class = "btn-primary")
               ),
               easyClose = FALSE
             ))
           }, ignoreInit = TRUE)
-          
+
           # Observer for Save button (in modal)
           observeEvent(input[[local_save_id]], {
             req(input[[local_save_id]] > 0)
-            
+
             # Get input value
             input_id <- paste0("synonyms_input_", make.names(local_dest_col))
             new_text <- input[[input_id]]

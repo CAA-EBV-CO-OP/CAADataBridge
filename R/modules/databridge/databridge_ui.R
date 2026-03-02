@@ -137,7 +137,7 @@ databridge_ui_content <- function(ns) {
           .dataTables_wrapper {
             height: auto;
           }
-          .dataTables_scrollBody {
+          #mapper-classification_table .dataTables_scrollBody {
             max-height: 400px !important;
           }
           table.dataTable td {
@@ -528,27 +528,27 @@ databridge_ui_content <- function(ns) {
             color: #6c757d;
           }
         ")),
-        tags$script(HTML("
+        tags$script(HTML(paste0("
           $(document).ready(function() {
+            // Module namespace prefix for Shiny input IDs
+            var ns = '", ns(''), "';
+
             // Dark mode toggle functionality
-            // Load saved preference from localStorage; default to dark on first visit
             var stored = localStorage.getItem('darkMode');
             var darkMode = (stored === null) ? true : (stored === 'true');
             if (stored === null && darkMode === true) {
-              // Persist the default so subsequent loads are consistent per-origin
               localStorage.setItem('darkMode', 'true');
             }
             if (darkMode) {
               $('body').addClass('dark-mode');
-              // Update the switch to match (with small delay for Shiny initialization)
               setTimeout(function() {
-                Shiny.setInputValue('dark_mode', true);
+                Shiny.setInputValue(ns + 'dark_mode', true);
               }, 100);
             }
-    
+
             // Listen for dark mode toggle changes
             $(document).on('shiny:inputchanged', function(event) {
-              if (event.name === 'dark_mode') {
+              if (event.name === ns + 'dark_mode') {
                 if (event.value === true) {
                   $('body').addClass('dark-mode');
                   localStorage.setItem('darkMode', 'true');
@@ -557,18 +557,15 @@ databridge_ui_content <- function(ns) {
                   localStorage.setItem('darkMode', 'false');
                 }
               }
-    
+
               // Check if this is a selectize input (mapping field)
-              if (event.name && event.name.startsWith('map_')) {
-                // Update the last selected column with the new value
+              if (event.name && event.name.startsWith(ns + 'map_')) {
                 if (event.value && event.value !== '') {
-                  Shiny.setInputValue('last_selected_column', event.value, {priority: 'event'});
+                  Shiny.setInputValue(ns + 'last_selected_column', event.value, {priority: 'event'});
                 }
-    
-                // Enable/disable preview button based on selection
-                var targetName = event.name.replace('map_', '');
-                // Use getElementById to handle potential special characters in IDs
-                var previewBtn = $(document.getElementById('preview_' + targetName));
+
+                var targetName = event.name.replace(ns + 'map_', '');
+                var previewBtn = $(document.getElementById(ns + 'preview_' + targetName));
                 if (previewBtn.length) {
                   if (event.value && event.value !== '') {
                     previewBtn.prop('disabled', false);
@@ -579,12 +576,11 @@ databridge_ui_content <- function(ns) {
                   }
                 }
               }
-    
-              // Handle destination mode selectors (dest_*_selector)
-              if (event.name && event.name.startsWith('dest_') && event.name.endsWith('_selector')) {
-                var destCol = event.name.replace('dest_', '').replace('_selector', '');
-                // Use getElementById to avoid jQuery selector issues with special characters (like dots from make.names)
-                var destPreviewBtn = $(document.getElementById('preview_dest_' + destCol));
+
+              // Handle destination mode selectors
+              if (event.name && event.name.startsWith(ns + 'dest_') && event.name.endsWith('_selector')) {
+                var destCol = event.name.replace(ns + 'dest_', '').replace('_selector', '');
+                var destPreviewBtn = $(document.getElementById(ns + 'preview_dest_' + destCol));
                 if (destPreviewBtn.length) {
                   if (event.value && event.value !== '') {
                     destPreviewBtn.prop('disabled', false);
@@ -596,28 +592,25 @@ databridge_ui_content <- function(ns) {
                 }
               }
             });
-    
+
             // Class filter checkboxes - send combined state to Shiny
             function updateClassFilter() {
               var selected = [];
-              if ($('#filter_class_1').is(':checked')) selected.push('1');
-              if ($('#filter_class_2').is(':checked')) selected.push('2');
-              if ($('#filter_class_3').is(':checked')) selected.push('3');
-              if ($('#filter_class_missing').is(':checked')) selected.push('missing');
-              Shiny.setInputValue('mapping_class_filter', selected, {priority: 'event'});
+              if ($('#", ns('filter_class_1'), "').is(':checked')) selected.push('1');
+              if ($('#", ns('filter_class_2'), "').is(':checked')) selected.push('2');
+              if ($('#", ns('filter_class_3'), "').is(':checked')) selected.push('3');
+              if ($('#", ns('filter_class_missing'), "').is(':checked')) selected.push('missing');
+              Shiny.setInputValue(ns + 'mapping_class_filter', selected, {priority: 'event'});
             }
-    
-            // Bind checkbox change events
-            $(document).on('change', '#filter_class_1, #filter_class_2, #filter_class_3, #filter_class_missing', function() {
+
+            $(document).on('change', '#", ns('filter_class_1'), ", #", ns('filter_class_2'), ", #", ns('filter_class_3'), ", #", ns('filter_class_missing'), "', function() {
               updateClassFilter();
             });
-    
-            // Initialize on page load (after Shiny is ready)
+
             $(document).on('shiny:connected', function() {
               updateClassFilter();
             });
-          });
-        "))
+          });")))
       ),
     
       sidebarLayout(
@@ -912,7 +905,7 @@ databridge_ui_content <- function(ns) {
           h4("Mapped Data Preview"),
           tags$div(
             id = ns("mapped-data-container"),
-            style = "height: 450px; overflow-y: auto;",
+            style = "overflow-x: auto;",
             DT::dataTableOutput(ns("mapped_data_preview"))
           ),
           hr(),

@@ -15,7 +15,7 @@ host_ui <- page_navbar(
 
   # Dark mode toggle
   nav_spacer(),
-  nav_item(input_dark_mode(id = "dark_mode", mode = "dark")),
+  nav_item(input_dark_mode(id = "dark_mode", mode = "light")),
 
   # ========================================================================
   # Home / App Chooser (Landing Page)
