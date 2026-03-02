@@ -1604,6 +1604,15 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     }
     message("================================")
 
+    selected_row_active <- !is.null(rv$selected_row_id) &&
+      isTRUE(rv$selected_row_id >= 1) &&
+      isTRUE(rv$selected_row_id <= nrow(rv$adf_transformed))
+    subject_seed <- if (selected_row_active) {
+      rv$adf_transformed[rv$selected_row_id, , drop = FALSE]
+    } else {
+      rv$selected_property
+    }
+
     # Generate input widgets dynamically
     inputs <- lapply(subject_cols, function(col_name) {
       col_data <- rv$adf_transformed[[col_name]]
@@ -1616,11 +1625,16 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       # 4. Median/empty (fallback for fresh start)
       default_value <- NULL
 
-      if (!is.null(rv$selected_property)) {
-        if (isTRUE(rv$subject_fresh_load)) {
+      if (!is.null(subject_seed)) {
+        if (selected_row_active) {
+          # Quick-pick should always reflect the selected source row in the visible fields.
+          if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
+          }
+        } else if (isTRUE(rv$subject_fresh_load)) {
           # Fresh load - use selected_property values directly, ignore browser cache
-          if (col_name %in% names(rv$selected_property)) {
-            default_value <- rv$selected_property[[col_name]]
+          if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
           }
         } else {
           # Not fresh load - check for user's manual edits first
@@ -1641,8 +1655,8 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
           if (!is.null(existing_value)) {
             default_value <- existing_value
-          } else if (col_name %in% names(rv$selected_property)) {
-            default_value <- rv$selected_property[[col_name]]
+          } else if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
           }
         }
       }
@@ -1867,6 +1881,14 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
     # Capture fresh_load flag ONCE before the lapply to avoid issues
     is_fresh_load <- isTRUE(rv$subject_fresh_load)
+    selected_row_active <- !is.null(rv$selected_row_id) &&
+      isTRUE(rv$selected_row_id >= 1) &&
+      isTRUE(rv$selected_row_id <= nrow(rv$adf_transformed))
+    subject_seed <- if (selected_row_active) {
+      rv$adf_transformed[rv$selected_row_id, , drop = FALSE]
+    } else {
+      rv$selected_property
+    }
 
     # Generate input widgets
     inputs <- lapply(subject_cols, function(col_name) {
@@ -1880,11 +1902,16 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       # 4. Median/empty (fallback for fresh start)
       default_value <- NULL
 
-      if (!is.null(rv$selected_property)) {
-        if (is_fresh_load) {
+      if (!is.null(subject_seed)) {
+        if (selected_row_active) {
+          # Quick-pick should always reflect the selected source row in the visible fields.
+          if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
+          }
+        } else if (is_fresh_load) {
           # Fresh load - use selected_property values directly, ignore browser cache
-          if (col_name %in% names(rv$selected_property)) {
-            default_value <- rv$selected_property[[col_name]]
+          if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
             message("  Fresh load: Setting ", col_name, " = ", default_value)
           }
         } else {
@@ -1906,8 +1933,8 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
           if (!is.null(existing_value)) {
             default_value <- existing_value
-          } else if (col_name %in% names(rv$selected_property)) {
-            default_value <- rv$selected_property[[col_name]]
+          } else if (col_name %in% names(subject_seed)) {
+            default_value <- subject_seed[[col_name]]
           }
         }
       }
