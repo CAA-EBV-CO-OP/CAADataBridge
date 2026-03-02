@@ -19,6 +19,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     dt_model = NULL,
     dt_model_base = NULL,      # Base model without Condition/DesignStyle
     dt_model_enhanced = NULL,  # Enhanced model with complete data only
+    model_source_row_ids = NULL, # Row IDs in rv$adf_transformed used to train rv$dt_model
     cms = NULL,
     subject = NULL,
     subject_node = NULL,
@@ -43,6 +44,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
       tryCatch({
         rv$adf <- data
+        rv$model_source_row_ids <- NULL
 
         showNotification(
           sprintf("Loaded %d records from Column Mapper", nrow(data)),
@@ -162,6 +164,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
         # Store in rv$adf (this triggers the same downstream processing as fileInput)
         rv$adf <- data
+        rv$model_source_row_ids <- NULL
 
         # Show notification that data was auto-loaded
         showNotification(
@@ -281,6 +284,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
     rv$dt_model <- NULL
     rv$dt_model_base <- NULL
     rv$dt_model_enhanced <- NULL
+    rv$model_source_row_ids <- NULL
     rv$cms <- NULL
     rv$subject <- NULL
     rv$subject_node <- NULL
@@ -3138,6 +3142,8 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
       # Determine which variables to use based on Include/Exclude mode
       all_vars <- names(rv$adf_transformed)
+      # Track source row IDs so CMS extraction can map model rows back to original data.
+      source_row_ids <- seq_len(nrow(rv$adf_transformed))
 
       # Get user's variable selection
       user_selected_vars <- if (!is.null(rv$selected_vars)) rv$selected_vars else character(0)
@@ -3182,13 +3188,8 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       }
 
       # Create data subset with final variables
-      vars_to_exclude <- which(!(all_vars %in% final_vars))
-
-      if (length(vars_to_exclude) > 0) {
-        adf_for_tree <- rv$adf_transformed[, -vars_to_exclude]
-      } else {
-        adf_for_tree <- rv$adf_transformed
-      }
+      keep_vars <- intersect(all_vars, final_vars)
+      adf_for_tree <- rv$adf_transformed[, keep_vars, drop = FALSE]
 
       # IMPORTANT: Filter to sold listings if response variable is Sold Price
       # This prevents including Active/Pending/Expired listings with NA sold prices
@@ -3205,8 +3206,10 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
         # Filter to only sold status
         # Common sold status values: "Sold", "Closed", "S", etc.
-        adf_for_tree <- adf_for_tree %>%
-          dplyr::filter(grepl("^(sold|closed|s)$", .data[[status_col_name]], ignore.case = TRUE))
+        sold_mask <- grepl("^(sold|closed|s)$", adf_for_tree[[status_col_name]], ignore.case = TRUE)
+        sold_mask[is.na(sold_mask)] <- FALSE
+        adf_for_tree <- adf_for_tree[sold_mask, , drop = FALSE]
+        source_row_ids <- source_row_ids[sold_mask]
 
         rows_after <- nrow(adf_for_tree)
         rows_filtered <- rows_before - rows_after
@@ -3412,6 +3415,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           duration = 5
         )
         adf_for_tree <- adf_for_tree[complete_response, ]
+        source_row_ids <- source_row_ids[complete_response]
         message(sprintf("Data after NA removal: %d rows, %d cols",
                         nrow(adf_for_tree), ncol(adf_for_tree)))
       }
@@ -3428,6 +3432,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       }
 
       incProgress(0.6, detail = "Training model...")
+      rv$model_source_row_ids <- NULL
 
       # Build decision tree(s)
       if (isTRUE(input$compare_models)) {
@@ -3442,6 +3447,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           # MODEL A: Base Model (exclude Condition/DesignStyle, use ALL rows)
           # Note: adf_for_tree already has user exclusions and date columns removed
           base_data <- adf_for_tree[, !names(adf_for_tree) %in% has_condition_cols, drop = FALSE]
+          base_source_row_ids <- source_row_ids
 
           # Remove any remaining Date columns
           base_data <- base_data[, !sapply(base_data, inherits, "Date"), drop = FALSE]
@@ -3459,6 +3465,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
           if (sum(complete_rows) > 5) {  # Need at least 5 rows
             enhanced_data <- adf_for_tree[complete_rows, , drop = FALSE]
+            enhanced_source_row_ids <- source_row_ids[complete_rows]
 
             # Remove any remaining Date columns
             enhanced_data <- enhanced_data[, !sapply(enhanced_data, inherits, "Date"), drop = FALSE]
@@ -3480,6 +3487,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
             # Set primary model to enhanced for CMS extraction
             rv$dt_model <- rv$dt_model_enhanced
+            rv$model_source_row_ids <- enhanced_source_row_ids
 
             showNotification(
               sprintf("Models built! Base: %d rows, Enhanced: %d rows (with complete data)",
@@ -3494,6 +3502,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
               type = "warning"
             )
             rv$dt_model <- rv$dt_model_base
+            rv$model_source_row_ids <- base_source_row_ids
           }
         } else {
           showNotification("No Condition/DesignStyle columns found. Building single model.", type = "warning")
@@ -3503,6 +3512,9 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
             showNotification(paste("Error building tree:", e$message), type = "error")
             NULL
           })
+          if (!is.null(rv$dt_model)) {
+            rv$model_source_row_ids <- source_row_ids
+          }
         }
       } else {
         # === STANDARD MODE ===
@@ -3518,6 +3530,9 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
           showNotification(paste("Error building tree:", e$message), type = "error")
           NULL
         })
+        if (!is.null(rv$dt_model)) {
+          rv$model_source_row_ids <- source_row_ids
+        }
 
         # Optional debug: inspect qeDT result without affecting model assignment
         if (!is.null(rv$dt_model)) {
@@ -3773,7 +3788,7 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
 
   # Extract CMS when subject is defined
   observe({
-    req(rv$dt_model, rv$adf)
+    req(rv$dt_model, rv$adf_transformed)
 
     subject_df <- get_subject_data()
 
@@ -3876,7 +3891,18 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
                 is.na(prev_count) ||
                 prev_count != length(cms_indices)
 
-              rv$cms <- rv$adf[cms_indices, ]
+              # Map model-row indices back to the transformed source data used for subject selection.
+              if (!is.null(rv$model_source_row_ids) &&
+                  length(rv$model_source_row_ids) >= max(cms_indices)) {
+                source_idx <- rv$model_source_row_ids[cms_indices]
+                source_idx <- source_idx[!is.na(source_idx) &
+                                           source_idx >= 1 &
+                                           source_idx <= nrow(rv$adf_transformed)]
+                rv$cms <- rv$adf_transformed[source_idx, , drop = FALSE]
+              } else {
+                # Fallback for legacy models built before row-ID tracking.
+                rv$cms <- rv$adf_transformed[cms_indices, , drop = FALSE]
+              }
               rv$subject <- subject_df
               rv$subject_node <- subject_node
 
