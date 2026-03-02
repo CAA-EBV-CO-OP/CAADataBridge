@@ -1,25 +1,38 @@
-# Environment variables (contains secrets)
-.Renviron
-
-# R session files
+# R / Shiny
+.Rproj.user
 .Rhistory
 .RData
 .Ruserdata
-.Rproj.user/
 *.Rproj
+rsconnect/
 
-# Test data
-TEMP TEST DATA/
-data/
+# Output
+MappedData/
+*.xlsx
+*.png
+*.html
 
-# IDE/editor
-.vscode/
-.claude/
+# Data files - never commit MLS/real estate data
+*.csv
+!templates/*.csv
+sample_data/
 
-# OS
+# System
 .DS_Store
 Thumbs.db
-
-# Windows reserved device names
 nul
-NUL
+
+# Environment
+.Renviron
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Temp/debug files
+RConsole*.txt
+CLAUDE_CODE_NOTES*.md
+
+# Claude
+.claude/
