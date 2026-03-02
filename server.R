@@ -3054,7 +3054,7 @@ server <- function(input, output, session) {
             came_from_profile <- !is.null(profile_source) && identical(profile_source$source, "profile")
 
             # Get exclusions early to prevent re-applying excluded values
-            dest_col_exclusions <- current_exclusions
+            dest_col_exclusions <- field_exclusions()[[dest_col]] %||% character(0)
 
             # Check for existing selection - prioritize tracker over input (timing issue fix)
             # But skip excluded values to prevent infinite reactive loops

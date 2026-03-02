@@ -59,5 +59,16 @@ cat(sprintf("  Directory: %s\n", normalizePath(app_dir)))
 cat(sprintf("  R version: %s\n", R.version.string))
 cat("========================================\n\n")
 
-# Launch
-shiny::runApp(app_dir, port = 4545, launch.browser = TRUE)
+# Launch the modular app entrypoint explicitly.
+# This avoids accidentally booting legacy root ui.R/server.R if present.
+app_file <- file.path(app_dir, "app.R")
+if (!file.exists(app_file)) {
+  stop(sprintf("app.R not found at: %s", app_file))
+}
+
+app_obj <- source(app_file, local = new.env(parent = globalenv()))$value
+if (!inherits(app_obj, "shiny.appobj")) {
+  stop("app.R did not return a shiny.appobj")
+}
+
+shiny::runApp(app_obj, port = 4545, launch.browser = TRUE)
