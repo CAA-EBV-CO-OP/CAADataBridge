@@ -5526,11 +5526,13 @@ databridge_server_logic <- function(input, output, session) {
             # Add the clicked column if not already present
             if (!local_col %in% current_address_cols) {
               new_selection <- c(current_address_cols, local_col)
+              # Single source of truth: let updateSelectizeInput propagate, then
+              # the observer on input$map_Address triggers one clean re-render.
+              # Calling set_value_source() here writes the new value before the
+              # input has caught up, then mapping_ui reads stale input and
+              # overwrites it - causing the Shiny output-state desync.
               updateSelectizeInput(session, "map_Address", selected = new_selection)
-  
-              # Update value source tracker
-              set_value_source("Address", "manual", new_selection)
-  
+
               showNotification(
                 sprintf("Added '%s' to Address mapping", local_col),
                 type = "message",
@@ -5543,7 +5545,15 @@ databridge_server_logic <- function(input, output, session) {
         })
       }
     })
-  
+
+    # Re-render mapping_ui after input$map_Address has settled from the client.
+    # This is the single trigger for badge updates on the Address card -
+    # both +City button clicks and direct selectize edits funnel through here,
+    # avoiding the race condition that caused Shiny output-state desync.
+    observeEvent(input$map_Address, {
+      ui_refresh_trigger(ui_refresh_trigger() + 1)
+    }, ignoreInit = TRUE, ignoreNULL = FALSE)
+
     # Observer for address component auto-suggest clicks (destination mode)
     observe({
       req(current_dataset())
@@ -9138,6 +9148,23 @@ databridge_server_logic <- function(input, output, session) {
         })
       }
   
+      text_col_patterns <- c("remark", "comment", "description", "notes")
+      text_cols <- grep(paste(text_col_patterns, collapse = "|"),
+                        names(table_data), ignore.case = TRUE, value = FALSE)
+      column_defs <- if (length(text_cols) > 0) {
+        list(list(
+          targets = text_cols - 1,
+          render = DT::JS(
+            "function(data, type, row, meta) {",
+            "  if (type === 'display' && data != null && data.length > 50) {",
+            "    return '<span title=\"' + data + '\">' + data.substr(0, 50) + '...</span>';",
+            "  }",
+            "  return data;",
+            "}"
+          )
+        ))
+      } else NULL
+
       DT::datatable(
         table_data,
         class = "display nowrap compact",
@@ -9145,8 +9172,10 @@ databridge_server_logic <- function(input, output, session) {
           pageLength = 10,
           scrollX = TRUE,
           dom = "ftip",
-          autoWidth = FALSE
-        )
+          autoWidth = FALSE,
+          columnDefs = column_defs
+        ),
+        escape = FALSE
       )
     })
   

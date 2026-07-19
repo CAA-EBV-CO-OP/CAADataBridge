@@ -1252,14 +1252,35 @@ dt_server_logic <- function(input, output, session, mapped_data = NULL) {
       rv$adf_transformed %>% select(1:min(10, ncol(rv$adf_transformed)))
     }
 
+    df_head <- head(df, 10)
+
+    text_col_patterns <- c("remark", "comment", "description", "notes")
+    text_cols <- grep(paste(text_col_patterns, collapse = "|"),
+                      names(df_head), ignore.case = TRUE, value = FALSE)
+    column_defs <- if (length(text_cols) > 0) {
+      list(list(
+        targets = text_cols - 1,
+        render = JS(
+          "function(data, type, row, meta) {",
+          "  if (type === 'display' && data != null && data.length > 50) {",
+          "    return '<span title=\"' + data + '\">' + data.substr(0, 50) + '...</span>';",
+          "  }",
+          "  return data;",
+          "}"
+        )
+      ))
+    } else NULL
+
     datatable(
-      head(df, 10),
+      df_head,
       options = list(
         scrollX = TRUE,
         pageLength = 10,
-        dom = 't'
+        dom = 't',
+        columnDefs = column_defs
       ),
-      rownames = FALSE
+      rownames = FALSE,
+      escape = FALSE
     )
   })
 

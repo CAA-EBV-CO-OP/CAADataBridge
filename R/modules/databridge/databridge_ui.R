@@ -37,6 +37,9 @@ databridge_ui_content <- function(ns) {
     
       tags$head(
         tags$title(format_build_label()),
+        # Selectize listener-leak fix: pre-destroys selectize instances before
+        # mapping_ui re-renders, and removes orphaned dropdown divs from <body>.
+        tags$script(src = "selectize-cleanup.js"),
         tags$style(HTML("
           /* Disabled section for destination schema controls */
           #dest_schema_controls.disabled-section {
