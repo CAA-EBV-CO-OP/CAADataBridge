@@ -1677,6 +1677,7 @@ databridge_server_logic <- function(input, output, session) {
             if (is.list(dest_assign)) dest_assign <- unlist(dest_assign)
             profile_payload$destination_assignments <- dest_assign
             profile_payload$restrict_to_destination_only <- isTRUE(raw_profile$restrict_to_destination_only)
+            profile_payload$restrict_explicit <- !is.null(raw_profile$restrict_to_destination_only)
           } else {
             profile_payload$source_mappings <- raw_profile
             profile_payload$exclusions <- list()
@@ -1785,6 +1786,7 @@ databridge_server_logic <- function(input, output, session) {
             if (is.list(dest_assign)) dest_assign <- unlist(dest_assign)
             profile_payload$destination_assignments <- dest_assign
             profile_payload$restrict_to_destination_only <- isTRUE(raw_profile$restrict_to_destination_only)
+            profile_payload$restrict_explicit <- !is.null(raw_profile$restrict_to_destination_only)
           } else {
             profile_payload$source_mappings <- raw_profile
             profile_payload$exclusions <- list()
@@ -1875,6 +1877,13 @@ databridge_server_logic <- function(input, output, session) {
         } else {
           rv$dest_headers <- character()
           destination_suggestion_cache(list())
+          # CValR-schema profiles saved as RDS/JSON carry the restrict setting too (2026-09-24):
+          # a profile that keeps Class 3 pass-through columns is saved with restrict OFF and must
+          # load that way. CSV profiles do not record it, so the checkbox is left as it is.
+          if (isTRUE(profile_payload$restrict_explicit)) {
+            updateCheckboxInput(session, "restrict_to_destination_only",
+                                value = isTRUE(profile_payload$restrict_to_destination_only))
+          }
         }
   
         # Clear suggestion cache - profile takes precedence over auto-suggestions
@@ -7672,14 +7681,20 @@ databridge_server_logic <- function(input, output, session) {
         before_count <- ncol(final_data)
         final_data <- final_data[, intersect(allowed, names(final_data)), drop = FALSE]
         message(sprintf("RESTRICT FINAL FILTER: %d -> %d columns", before_count, ncol(final_data)))
-  
-        # Rename ColumnMapper standard field names to CValR 4.0 expected column names.
-        # Verified against CValR 4.0 DataImport.R ColNameMappings.
-        # Apply CValR field rename (from shared/cvalr_field_map.R)
+      }
+
+      # Rename ColumnMapper standard field names to CValR 4.0 expected column names
+      # (shared/cvalr_field_map.R; verified against CValR 4.0 DataImport.R ColNameMappings).
+      # Runs for every CValR-schema export, not only restricted ones: before 2026-09-24 it sat
+      # inside the restrict block, so un-ticking "restrict" to keep Class 3 pass-through columns
+      # produced internal names (PriceListed, PriceOriginal, ListingKey) that CValR rejects.
+      # Pass-through columns are not in the rename map and keep their source names.
+      # Destination-schema exports are renamed only when restricted, exactly as before.
+      if (isTRUE(input$restrict_to_destination_only) || !use_dest_schema) {
         cvalr_result <- apply_cvalr_rename(final_data)
         final_data <- cvalr_result$data
-        message(sprintf("RESTRICT RENAME: %d columns renamed to CValR dest template names", cvalr_result$renamed_count))
-        message(sprintf("RESTRICT FINAL COLUMNS: %s", paste(names(final_data), collapse = ", ")))
+        message(sprintf("CVALR RENAME: %d columns renamed to CValR dest template names", cvalr_result$renamed_count))
+        message(sprintf("CVALR FINAL COLUMNS: %s", paste(names(final_data), collapse = ", ")))
       }
   
       # Reorder columns to preferred export order
