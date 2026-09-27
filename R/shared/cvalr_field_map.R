@@ -57,6 +57,18 @@ CVALR_RENAME_MAP <- c(
 #' @param data Data frame with ColumnMapper standard field names
 #' @return List with data (renamed), renamed_count
 apply_cvalr_rename <- function(data) {
+  # CValR's lot size is in acres (exported as "Lot Acres"). If a square-foot column was mapped to LotS,
+  # convert it: values over 500 are treated as square feet, the same rule the mapper uses for
+  # PricePerLotSF (2026-09-26: a CRMLS LotSizeSquareFeet mapping made lots 43,560x too large).
+  if ("LotS" %in% names(data)) {
+    v <- suppressWarnings(as.numeric(gsub("[^0-9.]", "", as.character(data$LotS))))
+    sq <- !is.na(v) & v > 500
+    if (any(sq)) {
+      v[sq] <- round(v[sq] / 43560, 4)
+      data$LotS <- v
+      message(sprintf("CValR export: %d lot sizes converted from square feet to acres", sum(sq)))
+    }
+  }
   col_names <- names(data)
   renamed_count <- 0
   for (i in seq_along(col_names)) {

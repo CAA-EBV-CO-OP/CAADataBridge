@@ -1093,7 +1093,11 @@ CVALR_DWELLING_MAP <- c(
   # RESO PropertySubType values
   "single family residence"          = "Single Family - Detached",
   "single family"                    = "Single Family - Detached",
-  "manufactured home"                = "Single Family - Detached",
+  "manufactured home"                = "Manufactured Home on Land",
+  "manufactured on land"             = "Manufactured Home on Land",
+  "loft"                             = "Apartment",
+  "stock cooperative"                = "Apartment",
+  "own your own"                     = "Apartment",
   "townhouse"                        = "Townhouse",
   "residential lot"                  = "Residential Lot",
   "residential acreage"              = "Residential Acreage",
@@ -1214,7 +1218,7 @@ logic_target_groups <- list(
   "Date Fields" = list(
     DateSold = list(label = "Sale Date", required = TRUE, class = 1,
                     synonyms = c("CloseDate","SoldDate","COE","COEDate","sale date","sold date","date sold","closing date","close date","settlement date"), type = "date"),
-    DateListed = list(label = "Listing Date", class = 1, synonyms = c("ListingContractDate","ListingDate","ListDate","OnMarketDate","AgreementDate","list date","listing date","on market date"), type = "date"),
+    DateListed = list(label = "Listing Date", class = 1, synonyms = c("OnMarketDate","ListingDate","ListDate","list date","listing date","on market date","date listed"), fallback_synonyms = c("ListingContractDate","listing contract date"), type = "date"),
     DatePending = list(label = "Pending Date", class = 2, synonyms = c("PurchaseContractDate","PendingDate","UnderContractDate","ContractDate","Pend","pending date","offer date","contract date","agreement date","accepted offer date","acceptance date","pend","pend date"), type = "date"),
     OffMarketDate = list(label = "Off Market", class = 2, synonyms = c("OffMarketDate","DateOffMarket","WithdrawnDate","ExpirationDate","off market","withdrawn date","expiry date","expiration date","expired date","cancel date","cancelled date"), type = "date"),
     TitleChangeDate = list(label = "Title/Ownership Change Date", class = 2, synonyms = c("title/ownership change date","title change date","ownership change date","title transfer date","deed date","recording date"), type = "date")
@@ -1230,9 +1234,9 @@ logic_target_groups <- list(
     PostalCode = list(label = "Postal Code", class = 1, synonyms = c("PostalCode","ZipCode","Zip","zip code","postal code","postal"), type = "text"),
     Latitude = list(label = "Latitude", class = 2, synonyms = c("Latitude","lat"), type = "number"),
     Longitude = list(label = "Longitude", class = 2, synonyms = c("Longitude","lon","lng","long"), type = "number"),
-    Neighbourhood = list(label = "Neighbourhood", class = 2, synonyms = c("neighborhood","neighbourhood","district","community"), type = "text"),
+    Neighbourhood = list(label = "Neighbourhood", class = 2, synonyms = c("SubdivisionName","Subdivision","subdivision","neighborhood","neighbourhood","district","community name"), type = "text"),
     SubArea = list(label = "Sub Area", class = 2, synonyms = c("SubArea","MLSAreaMinor","sub area","mls area minor"), type = "text"),
-    Region = list(label = "Region", class = 2, synonyms = c("CountyOrParish","County","region","county","parish"), type = "text")
+    Region = list(label = "Region", class = 2, synonyms = c("MLSAreaMajor","mls area major","major area","region"), fallback_synonyms = c("CountyOrParish","County","county","parish"), type = "text")
   ),
   "Identifiers" = list(
     ListingKey = list(label = "Listing Key (Unique ID)", required = TRUE, class = 1, synonyms = c("ListingKey","ListingKeyNumeric","Matrix_Unique_ID","listing key","unique id","transaction key","primary key","record id","system id"), type = "id"),
@@ -1260,7 +1264,7 @@ PID = list(label = "Property ID (PID)", class = 2, synonyms = c("ParcelNumber","
     EnsBa = list(label = "Ensuite Baths", class = 2, synonyms = c("ensuite","master bath","ensuite bath"), type = "number"),
     TotalKitchens = list(label = "Total Kitchens", class = 2, synonyms = c("kitchens","total kitchens"), type = "number"),
     GarSp = list(label = "Garage Spaces", class = 2, synonyms = c("GarageSpaces","ParkingTotal","garage spaces","parking spaces","garage","parking"), type = "number"),
-    DwellingType = list(label = "Dwelling Type", class = 2, synonyms = c("dwelling type","home type","PropertyType","property type"), type = "text"),
+    DwellingType = list(label = "Dwelling Type", class = 2, synonyms = c("PropertySubType","property sub type","property subtype","dwelling type","home type","structure type"), type = "text"),
     StyleStoreys = list(label = "Style/Storeys", class = 2, synonyms = c("StoriesTotal","stories","storeys","number of stories","architectural style"), type = "text"),
     Levels = list(label = "Levels", class = 2, synonyms = c("Levels","levels","number of levels","stories total","# levels"), type = "text"),
     Condition = list(label = "Condition", class = 2, synonyms = c("PropertyCondition","Condition","condition","property condition"), type = "text"),
@@ -1275,7 +1279,8 @@ PID = list(label = "Property ID (PID)", class = 2, synonyms = c("ParcelNumber","
     WaterSource = list(label = "Water Source", class = 2, synonyms = c("WaterSource","water source"), type = "text"),
     YrBlt = list(label = "Year Built", class = 1, synonyms = c("YearBuilt","year built","built","yr built"), type = "number"),
     LotS = list(label = "Lot Size", required = FALSE, class = 1, type = "number",
-                synonyms = c("LotSizeSquareFeet","LotSizeArea","Lot","LotSize","lot size","lot area","lot sqft","land size","lot square feet")),
+                synonyms = c("LotSizeAcres","lot acres","lot size acres","acres","LotSizeArea","LotSize","lot size","lot area","land size"),
+                fallback_synonyms = c("LotSizeSquareFeet","lot sqft","lot square feet","Lot Size Sq Ft")),
     LotDimensions = list(label = "Lot Dimensions", class = 2, synonyms = c("lot dimensions","lot size dimensions","lot dim","lot size dimensions l x w","lot size dim"), type = "text"),
     PoolYN = list(label = "Pool", class = 2, synonyms = c("PoolPrivateYN","PoolYN","pool","swimming pool"), type = "boolean"),
     StrataFees = list(label = "Strata Fees", class = 2, type = "currency",
@@ -1813,6 +1818,15 @@ calculate_column_scores <- function(tgt, meta, detected_cols, dataset = NULL, co
     syn_norm <- tolower(gsub("[^[:alnum:]]", "", meta$synonyms))
     syn_match <- dnorm %in% syn_norm
     scores[syn_match] <- scores[syn_match] + 150
+  }
+
+  # 2a. FALLBACK SYNONYMS - Score: 120 (2026-09-26). Acceptable names that must lose to a real synonym
+  # when a file has both (County for Region when MLSAreaMajor exists; ListingContractDate for the listing
+  # date when OnMarketDate exists). Still beats any fuzzy match (max 80).
+  if (length(meta$fallback_synonyms)) {
+    fb_norm <- tolower(gsub("[^[:alnum:]]", "", meta$fallback_synonyms))
+    fb_match <- dnorm %in% fb_norm & scores < 150
+    scores[fb_match] <- scores[fb_match] + 120
   }
 
   # 2b. SYNONYM WORD MATCH - Score: 80 (OPTIMIZED with rapidfuzz)
