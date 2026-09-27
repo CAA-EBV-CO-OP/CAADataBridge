@@ -2,10 +2,10 @@
   "ListingId": ["MLS#", "MLS #", "MLSno", "MLS"],
   "ListingKey": ["matrix unique id", "Unique_Key"],
   "View": ["view appeal", "view description", "view type"],
-  "Condition": ["SpecialListingConditions", "SaleType", "PropertyCondition"],
-  "LotS": ["LotSizeSquareFeet", "Lot", "LotSIze", "Lot Size", "Lot Size Sq Ft"],
+  "Condition": ["PropertyCondition", "Property Condition", "condition", "Condition Display"],
+  "LotS": ["LotSizeAcres", "Lot Acres", "lot acres", "acres", "LotSize", "Lot Size", "LotSIze"],
   "PriceOriginal": ["OriginalListPrice", "OriginalPrice", "original list price", "original price", "initial list price", "Original Price", "Original List Price", "OriginalPrice", "OriginalListPrice", "PriceOriginal"],
-  "BA": ["BathroomsFull", "FullBaths", "Total Baths", "BathsTotal", "TotalBaths"],
+  "BA": ["BathroomsFull", "FullBaths", "Full Baths", "Bathrooms Full", "full bathrooms"],
   "StrataFees": ["AssociationFee", "HOAFee", "strata fees", "strata fee", "hoa fees", "hoa fee", "hoa dues", "hoa", "condo fees", "condo fee", "association fee", "association fees", "HOA"],
   "DateSold": ["CloseDate", "SoldDate", "sale date", "sold date", "date sold", "closing date", "close date", "DateSold"]
 }
